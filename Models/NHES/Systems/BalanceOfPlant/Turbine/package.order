@@ -11,3 +11,5 @@ Data
 BaseClasses
 ObsoleteRankines
 HTGR_RankineCycles
+SteamTurbine_L2_ClosedFeedHeat_NoBypass
+SteamTurbine_L2_ClosedFeedHeat_AdditionalFeedheater

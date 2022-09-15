@@ -79,9 +79,9 @@ model CS_SteamTurbine_L2_PressurePowerFeedtemp_HTGR
     yMax=1.0,
     yMin=0.0,
     initType=Modelica.Blocks.Types.Init.NoInit)
-    annotation (Placement(transformation(extent={{-38,72},{-18,92}})));
+    annotation (Placement(transformation(extent={{-36,72},{-16,92}})));
   Modelica.Blocks.Sources.Constant const9(k=data.p_steam_vent)
-    annotation (Placement(transformation(extent={{-78,72},{-58,92}})));
+    annotation (Placement(transformation(extent={{-76,72},{-56,92}})));
   Modelica.Blocks.Sources.ContinuousClock clock(offset=0, startTime=0)
     annotation (Placement(transformation(extent={{-222,-2},{-202,18}})));
   Modelica.Blocks.Sources.Constant valvedelay(k=0)
@@ -151,9 +151,9 @@ equation
   connect(const4.y, add.u1)
     annotation (Line(points={{-5.6,52},{0,52}}, color={0,0,127}));
   connect(const9.y, PI_TBV.u_s)
-    annotation (Line(points={{-57,82},{-40,82}}, color={0,0,127}));
+    annotation (Line(points={{-55,82},{-38,82}}, color={0,0,127}));
   connect(sensorBus.Steam_Pressure, PI_TBV.u_m) annotation (Line(
-      points={{-30,-100},{-100,-100},{-100,62},{-28,62},{-28,70}},
+      points={{-30,-100},{-100,-100},{-100,62},{-26,62},{-26,70}},
       color={239,82,82},
       pattern=LinePattern.Dash,
       thickness=0.5), Text(
@@ -162,7 +162,7 @@ equation
       extent={{-3,-6},{-3,-6}},
       horizontalAlignment=TextAlignment.Right));
   connect(actuatorBus.TBV, PI_TBV.y) annotation (Line(
-      points={{30,-100},{30,66},{-10,66},{-10,82},{-17,82}},
+      points={{30,-100},{30,66},{-10,66},{-10,82},{-15,82}},
       color={111,216,99},
       pattern=LinePattern.Dash,
       thickness=0.5), Text(

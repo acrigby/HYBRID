@@ -1133,12 +1133,12 @@ package FWHPT
         m_flow=-EM.port_b2_nominal.m_flow),
       port_b_nominal(p=EM.port_a2_nominal.p, h=EM.port_a2_nominal.h),
       redeclare
-        BalanceOfPlant.Turbine.ControlSystems.CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater
+        BalanceOfPlant.Turbine.ControlSystems.CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl
         CS(electric_demand_int=SC.demand_BOP.y[1]))
       annotation (Placement(transformation(extent={{54,-18},{94,22}})));
     TRANSFORM.Fluid.Sensors.SpecificEnthalpyTwoPort Discharge_out(redeclare
         package Medium = Modelica.Media.Water.StandardWater)
-      annotation (Placement(transformation(extent={{6,-170},{38,-150}})));
+      annotation (Placement(transformation(extent={{2,-52},{34,-32}})));
     TRANSFORM.Fluid.BoundaryConditions.Boundary_pT boundary(
       redeclare package Medium = Modelica.Media.Water.StandardWater,
       p=9500000,
@@ -1148,7 +1148,7 @@ package FWHPT
     TRANSFORM.Fluid.Valves.ValveLinear TBV(
       redeclare package Medium = Modelica.Media.Water.StandardWater,
       dp_nominal=500000,
-      m_flow_nominal=20)                   annotation (Placement(transformation(
+      m_flow_nominal=45)                   annotation (Placement(transformation(
           extent={{-8,8},{8,-8}},
           rotation=180,
           origin={132,-52})));
@@ -1157,16 +1157,16 @@ package FWHPT
       p=10000000,
       T=463.15,
       nPorts=1)
-      annotation (Placement(transformation(extent={{-40,-170},{-20,-150}})));
+      annotation (Placement(transformation(extent={{-28,-52},{-8,-32}})));
     Modelica.Blocks.Sources.Trapezoid Discharge_Signal(
       amplitude=1,
       rising=5e4,
       width=10e4,
       falling=5e4,
       period=3e5,
-      offset=0.002,
+      offset=0,
       startTime=135000)
-      annotation (Placement(transformation(extent={{112,-142},{132,-122}})));
+      annotation (Placement(transformation(extent={{182,-52},{162,-32}})));
   equation
 
     connect(SMR_Taveprogram.port_b, stateSensor1.port_a) annotation (Line(points={{
@@ -1210,16 +1210,16 @@ package FWHPT
                                                 color={255,0,0}));
     connect(EM.port_a2, BOP.port_b) annotation (Line(points={{30,-6},{54,-6}},
                       color={0,127,255}));
-    connect(Discharge_out.port_b, BOP.port_a1) annotation (Line(points={{38,-160},
-            {66,-160},{66,-17.6}},           color={0,127,255}));
+    connect(Discharge_out.port_b, BOP.port_a1) annotation (Line(points={{34,-42},{
+            66,-42},{66,-17.6}},             color={0,127,255}));
     connect(boundary.ports[1], TBV.port_b) annotation (Line(points={{112,-52},{
             124,-52}},           color={0,127,255}));
-    connect(boundary1.ports[1], Discharge_out.port_a) annotation (Line(points={
-            {-20,-160},{-20,-120},{6,-120},{6,-160}}, color={0,127,255}));
+    connect(boundary1.ports[1], Discharge_out.port_a) annotation (Line(points={{-8,-42},
+            {2,-42}},                                 color={0,127,255}));
     connect(BOP.port_b1, TBV.port_a) annotation (Line(points={{80.4,-17.6},{
             80.4,-70},{148,-70},{148,-52},{140,-52}}, color={0,127,255}));
-    connect(Discharge_Signal.y, TBV.opening) annotation (Line(points={{133,-132},
-            {154,-132},{154,-42},{130,-42},{130,-45.6},{132,-45.6}}, color={0,0,
+    connect(Discharge_Signal.y, TBV.opening) annotation (Line(points={{161,-42},{132,
+            -42},{132,-45.6}},                                       color={0,0,
             127}));
     annotation (Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,
               -100},{200,100}}), graphics={

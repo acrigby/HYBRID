@@ -1,5 +1,6 @@
 within NHES.Systems.BalanceOfPlant.Turbine.ControlSystems;
-model CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater
+model
+  CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl
   extends NHES.Systems.BalanceOfPlant.Turbine.BaseClasses.Partial_ControlSystem;
 
   extends NHES.Icons.DummyIcon;
@@ -10,19 +11,19 @@ model CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater
     annotation (Placement(transformation(extent={{-92,-56},{-72,-36}})));
   TRANSFORM.Controls.LimPID TCV_Power(
     controllerType=Modelica.Blocks.Types.SimpleController.PI,
-    k=5e-10,
+    k=-5e-8,
     Ti=30,
     k_s=1,
     k_m=1,
-    yMax=0.75,
-    yMin=-0.25 + 0.001,
+    yMax=0.9,
+    yMin=-0.1 + 0.001,
     initType=Modelica.Blocks.Types.Init.NoInit,
     xi_start=1500)
     annotation (Placement(transformation(extent={{-48,-2},{-28,-22}})));
   Modelica.Blocks.Sources.RealExpression
                                    realExpression(y=electric_demand_int)
     annotation (Placement(transformation(extent={{-94,-6},{-80,6}})));
-  Modelica.Blocks.Sources.Constant const7(k=0.25)
+  Modelica.Blocks.Sources.Constant const7(k=0.1)
     annotation (Placement(transformation(extent={{-26,-28},{-18,-20}})));
   Modelica.Blocks.Math.Add         add1
     annotation (Placement(transformation(extent={{-8,-28},{12,-8}})));
@@ -38,7 +39,7 @@ model CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater
     Q_Nom=40e6,
     T_Feedwater=421.15)
     annotation (Placement(transformation(extent={{-98,12},{-78,32}})));
-  Modelica.Blocks.Sources.Constant const(k=data.Q_Nom)
+  Modelica.Blocks.Sources.Constant const(k=data.p_steam)
     annotation (Placement(transformation(extent={{-78,-22},{-64,-8}})));
   Modelica.Blocks.Sources.Constant const2(k=1)
     annotation (Placement(transformation(extent={{2,74},{22,94}})));
@@ -57,7 +58,7 @@ model CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater
     k=1e-4,
     Ti=60,
     Td=0.1,
-    yMax=-0.05,
+    yMax=-0.048,
     yMin=-0.099,
     initType=Modelica.Blocks.Types.Init.NoInit,
     xi_start=1500)
@@ -66,7 +67,7 @@ model CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater
     annotation (Placement(transformation(extent={{-32,-58},{-24,-50}})));
   TRANSFORM.Controls.LimPID FWCP_Speed1(
     controllerType=Modelica.Blocks.Types.SimpleController.PI,
-    k=5e-3,
+    k=1e-2,
     Ti=15,
     Td=1,
     yMax=1000,
@@ -83,11 +84,6 @@ model CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater
   Modelica.Blocks.Sources.Constant const10(k=67)
     annotation (Placement(transformation(extent={{-110,124},{-90,144}})));
 equation
-  connect(sensorBus.Power, TCV_Power.u_m) annotation (Line(
-      points={{-30,-100},{-100,-100},{-100,8},{-38,8},{-38,0}},
-      color={239,82,82},
-      pattern=LinePattern.Dash,
-      thickness=0.5));
   connect(const7.y,add1. u2) annotation (Line(points={{-17.6,-24},{-10,-24}},
                                       color={0,0,127}));
   connect(TCV_Power.y, add1.u1)
@@ -182,4 +178,13 @@ equation
       index=-1,
       extent={{-3,-6},{-3,-6}},
       horizontalAlignment=TextAlignment.Right));
-end CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater;
+  connect(sensorBus.Steam_Pressure, TCV_Power.u_m) annotation (Line(
+      points={{-30,-100},{-100,-100},{-100,8},{-38,8},{-38,0}},
+      color={239,82,82},
+      pattern=LinePattern.Dash,
+      thickness=0.5), Text(
+      string="%first",
+      index=-1,
+      extent={{-3,6},{-3,6}},
+      horizontalAlignment=TextAlignment.Right));
+end CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl;

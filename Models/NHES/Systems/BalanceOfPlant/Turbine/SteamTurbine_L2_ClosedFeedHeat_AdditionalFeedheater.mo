@@ -7,7 +7,7 @@ model SteamTurbine_L2_ClosedFeedHeat_AdditionalFeedheater
     redeclare replaceable ControlSystems.ED_Dummy ED,
     redeclare replaceable Data.Turbine_2 data(
       R_feedwater=1000,
-      valve_TCV_dp_nominal=10000,
+      valve_TCV_dp_nominal=100000,
       valve_LPT_Bypass_mflow=10,
       valve_LPT_Bypass_dp_nominal=100000,
       InternalBypassValve_p_spring=6500000,
@@ -299,8 +299,8 @@ model SteamTurbine_L2_ClosedFeedHeat_AdditionalFeedheater
         extent={{-11,-11},{11,11}},
         rotation=180,
         origin={-115,-41})));
-  TRANSFORM.Fluid.Sensors.MassFlowRate sensor_m_flow(redeclare package Medium
-      = Modelica.Media.Water.StandardWater)
+  TRANSFORM.Fluid.Sensors.MassFlowRate sensor_m_flow(redeclare package Medium =
+        Modelica.Media.Water.StandardWater)
     annotation (Placement(transformation(extent={{-130,-50},{-150,-30}})));
 initial equation
 

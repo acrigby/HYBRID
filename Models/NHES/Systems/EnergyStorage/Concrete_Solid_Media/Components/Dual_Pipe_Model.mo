@@ -113,14 +113,16 @@ public
       Medium = HTF) annotation (Placement(transformation(extent={{-88,12},{-68,32}}),
                   iconTransformation(extent={{-88,12},{-68,32}})));
   TRANSFORM.Fluid.Interfaces.FluidPort_State Charge_Outlet(redeclare package
-      Medium = HTF) annotation (Placement(transformation(extent={{20,52},{40,72}}),
-        iconTransformation(extent={{20,52},{40,72}})));
+      Medium = HTF) annotation (Placement(transformation(extent={{-88,-46},{-68,
+            -26}}),
+        iconTransformation(extent={{-88,-46},{-68,-26}})));
   TRANSFORM.Fluid.Interfaces.FluidPort_Flow Discharge_Inlet(redeclare package
-      Medium = HTF) annotation (Placement(transformation(extent={{90,10},{110,30}}),
-        iconTransformation(extent={{68,-12},{88,8}})));
+      Medium = HTF) annotation (Placement(transformation(extent={{90,-46},{110,
+            -26}}),
+        iconTransformation(extent={{68,-52},{88,-32}})));
   TRANSFORM.Fluid.Interfaces.FluidPort_State Discharge_Outlet(redeclare package
-      Medium = HTF) annotation (Placement(transformation(extent={{-110,10},{-90,
-            30}}), iconTransformation(extent={{-26,-66},{-6,-46}})));
+      Medium = HTF) annotation (Placement(transformation(extent={{90,12},{110,
+            32}}), iconTransformation(extent={{70,12},{90,32}})));
   TRANSFORM.Fluid.ClosureRelations.Geometry.Models.DistributedVolume_1D.GenericPipe
     Discharge(
     nV=nX,

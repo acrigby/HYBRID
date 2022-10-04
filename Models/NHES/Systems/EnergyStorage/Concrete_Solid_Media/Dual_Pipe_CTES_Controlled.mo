@@ -33,8 +33,8 @@ model Dual_Pipe_CTES_Controlled
         extent={{5,5},{-5,-5}},
         rotation=180,
         origin={73,-43})));
-  TRANSFORM.Fluid.Sensors.MassFlowRate sensor_m_flow2(redeclare package Medium =
-        Modelica.Media.Examples.TwoPhaseWater)
+  TRANSFORM.Fluid.Sensors.MassFlowRate sensor_m_flow2(redeclare package Medium
+      = Modelica.Media.Examples.TwoPhaseWater)
     annotation (Placement(transformation(extent={{-4,4},{4,-4}},
         rotation=90,
         origin={100,-36})));
@@ -42,20 +42,21 @@ model Dual_Pipe_CTES_Controlled
                  annotation (Placement(transformation(
         extent={{10,-10},{-10,10}},
         rotation=90,
-        origin={72,32})));
+        origin={-28,-34})));
   TRANSFORM.Fluid.Interfaces.FluidPort_Flow port_charge_a(redeclare package
       Medium = HTF) annotation (Placement(
         transformation(extent={{-112,32},{-92,52}}), iconTransformation(extent={
             {-112,32},{-92,52}})));
   TRANSFORM.Fluid.Interfaces.FluidPort_State port_discharge_b(redeclare package
-      Medium = HTF) annotation (Placement(transformation(extent={{-112,-66},{-92,
-            -46}}), iconTransformation(extent={{-112,-66},{-92,-46}})));
+      Medium = HTF) annotation (Placement(transformation(extent={{88,34},{108,
+            54}}),  iconTransformation(extent={{88,34},{108,54}})));
   TRANSFORM.Fluid.Interfaces.FluidPort_Flow port_discharge_a(redeclare package
       Medium = HTF) annotation (Placement(transformation(extent={{88,-62},{108,-42}}),
         iconTransformation(extent={{88,-62},{108,-42}})));
   TRANSFORM.Fluid.Interfaces.FluidPort_State port_charge_b(redeclare package
-      Medium = HTF) annotation (Placement(transformation(extent={{94,36},{114,56}}),
-        iconTransformation(extent={{94,36},{114,56}})));
+      Medium = HTF) annotation (Placement(transformation(extent={{-112,-60},{
+            -92,-40}}),
+        iconTransformation(extent={{-112,-60},{-92,-40}})));
   Modelica.Blocks.Sources.RealExpression ConcreteTemp(y=CTES.T_Ave_Conc)
     annotation (Placement(transformation(extent={{-124,88},{-104,108}})));
   Modelica.Blocks.Sources.RealExpression Demand(y=External_Demand)
@@ -70,16 +71,17 @@ equation
           90,-43},{90,-46},{100,-46},{100,-40}},    color={0,127,255}));
   connect(CTES.Charge_Inlet, port_charge_a) annotation (Line(points={{-26.3,14.7},
           {-58,14.7},{-58,42},{-102,42}}, color={0,127,255}));
-  connect(CTES.Charge_Outlet, Condensate_Res.port_a) annotation (Line(points={{11.5,
-          28.7},{10,28.7},{10,52},{72,52},{72,39}}, color={0,127,255}));
-  connect(Condensate_Res.port_b, port_charge_b) annotation (Line(points={{72,25},
-          {82,25},{82,26},{92,26},{92,46},{104,46}}, color={0,127,255}));
+  connect(CTES.Charge_Outlet, Condensate_Res.port_a) annotation (Line(points={{-26.3,
+          -5.6},{-26.3,-4},{-42,-4},{-42,-27},{-28,-27}},
+                                                    color={0,127,255}));
+  connect(Condensate_Res.port_b, port_charge_b) annotation (Line(points={{-28,-41},
+          {-28,-50},{-102,-50}},                     color={0,127,255}));
   connect(port_discharge_a, resistance12.port_a) annotation (Line(points={{98,-52},
           {58,-52},{58,-54},{20,-54},{20,-44},{37,-44}}, color={0,127,255}));
-  connect(sensor_m_flow2.port_b, CTES.Discharge_Inlet) annotation (Line(points={
-          {100,-32},{100,8},{98,8},{98,6.3},{28.3,6.3}}, color={0,127,255}));
-  connect(CTES.Discharge_Outlet, port_discharge_b) annotation (Line(points={{-4.6,
-          -12.6},{-4.6,-56},{-102,-56}}, color={0,127,255}));
+  connect(sensor_m_flow2.port_b, CTES.Discharge_Inlet) annotation (Line(points={{100,-32},
+          {100,-8},{98,-8},{98,-7.7},{28.3,-7.7}},       color={0,127,255}));
+  connect(CTES.Discharge_Outlet, port_discharge_b) annotation (Line(points={{29,14.7},
+          {98,14.7},{98,44}},            color={0,127,255}));
   connect(actuatorBus.DFV_Opening, DFV.opening) annotation (Line(
       points={{30,100},{32,100},{32,76},{150,76},{150,-24},{73,-24},{73,-39}},
       color={111,216,99},

@@ -968,10 +968,10 @@ package FWHPT
     connect(CTES.Charge_Inlet,Charge_Valve. port_b) annotation (Line(points={{-52.3,
             -115.3},{-88,-115.3},{-88,-112},{-94,-112},{-94,-114},{-96,-114}},
                                                                    color={0,127,255}));
-    connect(CTES.Charge_Outlet,Condensate_out. port_a) annotation (Line(points={{-14.5,
-            -101.3},{-14.5,-72},{-10,-72}},           color={0,127,255}));
-    connect(CTES.Discharge_Outlet,Discharge_out. port_a) annotation (Line(points={{-30.6,
-            -142.6},{-6,-142.6},{-6,-142},{18,-142},{18,-142},{18,-142}},
+    connect(CTES.Charge_Outlet,Condensate_out. port_a) annotation (Line(points={{-52.3,
+            -135.6},{-52.3,-72},{-10,-72}},           color={0,127,255}));
+    connect(CTES.Discharge_Outlet,Discharge_out. port_a) annotation (Line(points={{3,
+            -115.3},{-6,-115.3},{-6,-142},{18,-142},{18,-142},{18,-142}},
                                                            color={0,127,255}));
     connect(Condensate_out.port_b,Condensate. ports[1])
       annotation (Line(points={{28,-72},{32,-72},{32,-56},{26,-56},{26,-42},{34,-42}},
@@ -979,7 +979,7 @@ package FWHPT
     connect(Discharge_out.port_b, BOP.port_a1) annotation (Line(points={{50,-142},
             {50,-120},{66,-120},{66,-17.6}}, color={0,127,255}));
     connect(CTES.Discharge_Inlet, pump_SimpleMassFlow1.port_b) annotation (Line(
-          points={{2.3,-123.7},{2.3,-105.85},{36,-105.85},{36,-89}}, color={0,
+          points={{2.3,-137.7},{2.3,-105.85},{36,-105.85},{36,-89}}, color={0,
             127,255}));
     connect(pump_SimpleMassFlow1.port_a, BOP.port_b1) annotation (Line(points={
             {58,-89},{80.4,-89},{80.4,-17.6}}, color={0,127,255}));
@@ -1244,4 +1244,318 @@ package FWHPT
 </html>"),
       __Dymola_experimentSetupOutput(events=false));
   end LWR_L2_Turbine_AdditionalFeedheater_QuickSim;
+
+  model Parabolic_Trough_Dual_Pipe_CTES_Water
+    extends Modelica.Icons.Example;
+    parameter Modelica.Units.SI.MassFlowRate shell_flow_shim=1.5;
+    parameter Modelica.Units.SI.MassFlowRate tube_flow_shim=1.5;
+    EnergyStorage.Concrete_Solid_Media.Components.Dual_Pipe_Model CTES(
+      nY=7,
+      nX=9,
+      tau=0.05,
+      nPipes=250,
+      dX=150,
+      dY=0.3,
+      redeclare package TES_Med =
+          EnergyStorage.Concrete_Solid_Media.BaseClasses.HeatCrete,
+      Hot_Con_Start=443.15,
+      Cold_Con_Start=363.15)
+      annotation (Placement(transformation(extent={{-40,-38},{30,32}})));
+
+    TRANSFORM.Fluid.BoundaryConditions.Boundary_ph Discharge_Exit(
+      redeclare package Medium =
+          Modelica.Media.Water.StandardWater,
+      p=90000,
+      h=800e3,
+      nPorts=1)
+      annotation (Placement(transformation(extent={{146,-54},{126,-34}})));
+    TRANSFORM.Fluid.Sensors.SpecificEnthalpyTwoPort Condensate_out(redeclare
+        package Medium =
+          Modelica.Media.Water.StandardWater)
+      annotation (Placement(transformation(extent={{-52,-22},{-90,-46}})));
+    TRANSFORM.Fluid.Sensors.SpecificEnthalpyTwoPort Discharge_out(redeclare
+        package Medium =
+          Modelica.Media.Water.StandardWater)
+      annotation (Placement(transformation(extent={{68,-62},{100,-42}})));
+    Modelica.Blocks.Sources.Trapezoid Discharge_Signal(
+      amplitude=1,
+      rising=900,
+      width=28100,
+      falling=900,
+      period=86400,
+      offset=0,
+      startTime=135000)
+      annotation (Placement(transformation(extent={{38,10},{58,30}})));
+    TRANSFORM.Fluid.Valves.ValveLinear Discharge_Valve(
+      redeclare package Medium =
+          Modelica.Media.Water.StandardWater,
+      dp_nominal=150000,
+      m_flow_nominal=10)
+      annotation (Placement(transformation(extent={{106,-22},{68,16}})));
+    TRANSFORM.Fluid.BoundaryConditions.Boundary_ph Discharge_Source(
+      redeclare package Medium =
+          Modelica.Media.Water.StandardWater,
+      p=100000,
+      h=400e3,
+      nPorts=1) annotation (Placement(transformation(extent={{146,-14},{126,6}})));
+    TRANSFORM.Fluid.BoundaryConditions.MassFlowSource_T boundary(
+      redeclare package Medium =
+          Modelica.Media.Water.StandardWater,
+      m_flow=0.5,
+      T=298.15,
+      nPorts=1)
+      annotation (Placement(transformation(extent={{-162,-74},{-142,-54}})));
+    TRANSFORM.Fluid.BoundaryConditions.Boundary_pT boundary1(
+      redeclare package Medium =
+          Modelica.Media.Water.StandardWater,
+      p=200000,
+      T=423.15,
+      nPorts=1) annotation (Placement(transformation(extent={{-66,-72},{-86,-52}})));
+   ThermoCycle.Components.Units.Solar.SolarField_SchottSopo         solarCollectorIncSchott1(
+      Mdotnom=0.5,
+      redeclare model FluidHeatTransferModel =
+          ThermoCycle.Components.HeatFlow.HeatTransfer.Ideal,
+      redeclare
+        ThermoCycle.Components.HeatFlow.Walls.SolarAbsorber.Geometry.Schott_SopoNova.Schott_2008_PTR70_Vacuum
+        CollectorGeometry,
+      redeclare package Medium1 = Modelica.Media.Water.StandardWater,
+      Ns=2,
+      Tstart_inlet=298.15,
+      Tstart_outlet=373.15,
+      pstart=1000000)
+      annotation (Placement(transformation(extent={{-146,-10},{-104,60}})));
+    Modelica.Blocks.Sources.Constant const2(k=25 + 273.15)
+      annotation (Placement(transformation(extent={{-206,10},{-186,30}})));
+    Modelica.Blocks.Sources.Constant const4(k=0)
+      annotation (Placement(transformation(extent={{-206,36},{-186,56}})));
+    Modelica.Blocks.Sources.Constant const5(k=0)
+      annotation (Placement(transformation(extent={{-204,66},{-184,86}})));
+    Modelica.Blocks.Sources.Step step1(
+      startTime=100,
+      height=0,
+      offset=0)
+      annotation (Placement(transformation(extent={{-206,-22},{-186,-2}})));
+  equation
+
+    connect(Discharge_Source.ports[1], Discharge_Valve.port_a) annotation (Line(
+          points={{126,-4},{120,-4},{120,-3},{106,-3}},
+                                                    color={0,127,255}));
+    connect(Discharge_Signal.y, Discharge_Valve.opening)
+      annotation (Line(points={{59,20},{87,20},{87,12.2}}, color={0,0,127}));
+    connect(CTES.Charge_Outlet, Condensate_out.port_a) annotation (Line(points={{-32.3,
+            -15.6},{-32.3,-14},{-46,-14},{-46,-34},{-52,-34}},
+                                                      color={0,127,255}));
+    connect(CTES.Discharge_Inlet, Discharge_Valve.port_b) annotation (Line(points={{22.3,
+            -17.7},{62.15,-17.7},{62.15,-3},{68,-3}}, color={0,127,255}));
+    connect(CTES.Discharge_Outlet, Discharge_out.port_a) annotation (Line(points={{23,4.7},
+            {62,4.7},{62,-52},{68,-52}},                   color={0,127,255}));
+    connect(Discharge_out.port_b, Discharge_Exit.ports[1])
+      annotation (Line(points={{100,-52},{120,-52},{120,-44},{126,-44}},
+                                                     color={0,127,255}));
+
+    connect(boundary1.ports[1], Condensate_out.port_b) annotation (Line(points=
+            {{-86,-62},{-96,-62},{-96,-34},{-90,-34}}, color={0,127,255}));
+    connect(const5.y, solarCollectorIncSchott1.v_wind) annotation (Line(
+        points={{-183,76},{-168,76},{-168,52},{-142.733,52},{-142.733,53}},
+        color={0,0,127},
+        smooth=Smooth.None));
+    connect(const4.y, solarCollectorIncSchott1.Theta) annotation (Line(
+        points={{-185,46},{-160,46},{-160,39.3182},{-142.5,39.3182}},
+        color={0,0,127},
+        smooth=Smooth.None));
+    connect(const2.y, solarCollectorIncSchott1.Tamb) annotation (Line(
+        points={{-185,20},{-166,20},{-166,24.0455},{-142.967,24.0455}},
+        color={0,0,127},
+        smooth=Smooth.None));
+    connect(step1.y, solarCollectorIncSchott1.DNI) annotation (Line(
+        points={{-185,-12},{-168,-12},{-168,5.5909},{-142.5,5.5909}},
+        color={0,0,127},
+        smooth=Smooth.None));
+    connect(boundary.ports[1], solarCollectorIncSchott1.InFlow) annotation (Line(
+          points={{-142,-64},{-118,-64},{-118,-10.6364}}, color={0,127,255}));
+    connect(solarCollectorIncSchott1.OutFlow, CTES.Charge_Inlet) annotation (Line(
+          points={{-118,59.3636},{-118,66},{-46,66},{-46,4.7},{-32.3,4.7}}, color=
+           {0,0,255}));
+    annotation (experiment(
+        StopTime=864000,
+        __Dymola_NumberOfIntervals=1957,
+        __Dymola_Algorithm="Esdirk45a"),
+      Diagram(coordinateSystem(extent={{-120,-100},{160,100}})),
+      Icon(coordinateSystem(extent={{-120,-100},{160,100}})));
+  end Parabolic_Trough_Dual_Pipe_CTES_Water;
+
+  model LWR_L2_Turbine_AdditionalFeedheater_Combination
+    "TES use case demonstration of a NuScale-style LWR operating within an energy arbitrage IES, storing and dispensing energy on demand from a two tank molten salt energy storage system nominally using HITEC salt to store heat."
+   parameter Real fracNominal_BOP = abs(EM.port_b2_nominal.m_flow)/EM.port_a1_nominal.m_flow;
+   parameter Real fracNominal_Other = sum(abs(EM.port_b3_nominal_m_flow))/EM.port_a1_nominal.m_flow;
+   parameter SI.Time timeScale=60*60 "Time scale of first table column";
+   parameter String fileName=Modelica.Utilities.Files.loadResource(
+      "modelica://NHES/Resources/Data/RAVEN/DNI_timeSeries.txt")
+    "File where matrix is stored";
+   Real demandChange=
+   min(1.05,
+   max(SC.W_totalSetpoint_BOP/SC.W_nominal_BOP*fracNominal_BOP
+       + sum(EM.port_b3.m_flow./EM.port_b3_nominal_m_flow)*fracNominal_Other,
+       0.5));
+   Real Effficiency = (BOP.generator1.Q_mech/SMR_Taveprogram.Q_total.y)*100;
+    PrimaryHeatSystem.SMR_Generic.Components.SMR_Taveprogram_No_Pump
+                                                             SMR_Taveprogram(
+      port_b_nominal(
+        p(displayUnit="Pa") = 3398e3,
+        T(displayUnit="degC") = 580.05,
+        h=2997670),
+      redeclare PrimaryHeatSystem.SMR_Generic.CS_SMR_Tave CS(W_turbine=sensorW.W,
+          W_Setpoint=sine.y),
+      port_a_nominal(
+        m_flow=67.07,
+        T(displayUnit="degC") = 422.05,
+        p=3447380))
+      annotation (Placement(transformation(extent={{-96,-24},{-46,32}})));
+
+    EnergyManifold.SteamManifold.SteamManifold_L1_boundaries EM(port_a1_nominal(
+        p=SMR_Taveprogram.port_b_nominal.p,
+        h=SMR_Taveprogram.port_b_nominal.h,
+        m_flow=-SMR_Taveprogram.port_b_nominal.m_flow), port_b1_nominal(p=
+            SMR_Taveprogram.port_a_nominal.p, h=SMR_Taveprogram.port_a_nominal.h))
+      annotation (Placement(transformation(extent={{-10,-18},{30,22}})));
+    SwitchYard.SimpleYard.SimpleConnections SY(nPorts_a=1)
+      annotation (Placement(transformation(extent={{114,-22},{154,22}})));
+    ElectricalGrid.InfiniteGrid.Infinite EG
+      annotation (Placement(transformation(extent={{192,-20},{232,20}})));
+    BaseClasses.Data_Capacity dataCapacity(IP_capacity(displayUnit="MW")=
+        53303300, BOP_capacity(displayUnit="MW") = 1165000000)
+      annotation (Placement(transformation(extent={{-100,82},{-80,102}})));
+    SupervisoryControl.InputSetpointData SC(delayStart=delayStart.k,
+      W_nominal_BOP(displayUnit="MW") = 50000000,
+      fileName=Modelica.Utilities.Files.loadResource(
+          "modelica://NHES/Resources/Data/RAVEN/Nominal_50_timeSeries.txt"))
+      annotation (Placement(transformation(extent={{158,60},{198,100}})));
+
+    TRANSFORM.Electrical.Sensors.PowerSensor sensorW
+      annotation (Placement(transformation(extent={{162,-6},{176,6}})));
+
+    Modelica.Blocks.Sources.CombiTimeTable DNI_Input(
+      tableOnFile=true,
+      offset={1},
+      startTime=0,
+      tableName="DNI",
+      timeScale=timeScale,
+      fileName=fileName)
+      annotation (Placement(transformation(extent={{-62,74},{-42,94}})));
+    BalanceOfPlant.Turbine.SteamTurbine_L2_ClosedFeedHeat_AdditionalFeedheater BOP(
+      port_a_nominal(
+        p=EM.port_b2_nominal.p,
+        h=EM.port_b2_nominal.h,
+        m_flow=-EM.port_b2_nominal.m_flow),
+      port_b_nominal(p=EM.port_a2_nominal.p, h=EM.port_a2_nominal.h),
+      redeclare
+        BalanceOfPlant.Turbine.ControlSystems.CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl_Combined_mflow
+        CS(electric_demand_int=SC.demand_BOP.y[1]))
+      annotation (Placement(transformation(extent={{54,-18},{94,22}})));
+    EnergyStorage.Concrete_Solid_Media.Dual_Pipe_CTES_Controlled_Feedwater
+      dual_Pipe_CTES_Controlled_Feedwater(redeclare
+        NHES.Systems.EnergyStorage.Concrete_Solid_Media.CS_Basic CS(DNI_Input=
+            DNI_Input.y[1]))
+      annotation (Placement(transformation(extent={{10,-76},{72,-32}})));
+    SecondaryEnergySupply.ConcentratedSolar1.ParabolicTrough parabolicTrough(DNI_Input
+        =DNI_Input.y[1])
+      annotation (Placement(transformation(extent={{-60,-74},{0,-32}})));
+    Modelica.Blocks.Sources.Constant delayStart(k=0)
+      annotation (Placement(transformation(extent={{-76,124},{-56,144}})));
+    Modelica.Blocks.Sources.Sine sine(
+      amplitude=17.5e6,
+      f=1/20000,
+      offset=42e6,
+      startTime=2000)
+      annotation (Placement(transformation(extent={{-40,118},{-20,138}})));
+    Modelica.Blocks.Sources.Trapezoid trapezoid(
+      amplitude=-20.58e6,
+      rising=100,
+      width=9800,
+      falling=100,
+      period=20000,
+      offset=47e6,
+      startTime=2000)
+      annotation (Placement(transformation(extent={{52,158},{72,178}})));
+    Modelica.Blocks.Math.Add         add
+      annotation (Placement(transformation(extent={{94,142},{114,162}})));
+    Modelica.Blocks.Sources.Trapezoid trapezoid1(
+      amplitude=20.14e6,
+      rising=100,
+      width=7800,
+      falling=100,
+      period=20000,
+      offset=0,
+      startTime=14000)
+      annotation (Placement(transformation(extent={{52,122},{72,142}})));
+    Modelica.Blocks.Sources.Constant const(k=47.5e6)
+      annotation (Placement(transformation(extent={{4,114},{24,134}})));
+    Modelica.Blocks.Math.Sum sum1
+      annotation (Placement(transformation(extent={{120,148},{140,168}})));
+  equation
+      dual_Pipe_CTES_Controlled_Feedwater.CS.FeedwaterTemperature = BOP.sensor_T2.T;
+    connect(SY.port_Grid, sensorW.port_a)
+      annotation (Line(points={{154,0},{162,0}}, color={255,0,0}));
+    connect(sensorW.port_b, EG.portElec_a)
+      annotation (Line(points={{176,0},{192,0}}, color={255,0,0}));
+    connect(SY.port_a[1], BOP.portElec_b)
+      annotation (Line(points={{114,0},{104,0},{104,2},{94,2}},
+                                                color={255,0,0}));
+    connect(EM.port_a2, BOP.port_b) annotation (Line(points={{30,-6},{54,-6}},
+                      color={0,127,255}));
+    connect(dual_Pipe_CTES_Controlled_Feedwater.port_discharge_b, BOP.port_a1)
+      annotation (Line(points={{58.2714,-44.32},{58.2714,-42},{66,-42},{66,
+            -17.6}},
+          color={0,127,255}));
+    connect(BOP.port_b1, dual_Pipe_CTES_Controlled_Feedwater.port_discharge_a)
+      annotation (Line(points={{80.4,-17.6},{80.4,-40},{82,-40},{82,-68},{
+            59.1571,-68},{59.1571,-67.64}},
+                                    color={0,127,255}));
+    connect(EM.port_b2, BOP.port_a)
+      annotation (Line(points={{30,10},{54,10}}, color={0,127,255}));
+    connect(parabolicTrough.Outlet, dual_Pipe_CTES_Controlled_Feedwater.port_charge_a)
+      annotation (Line(points={{-13.2857,-43.76},{-13.2857,-44},{13.9857,-44},{
+            13.9857,-44.76}},
+                      color={0,127,255}));
+    connect(SMR_Taveprogram.port_b, EM.port_a1) annotation (Line(points={{
+            -45.0909,14.7692},{-18,14.7692},{-18,10},{-10,10}},
+                                                       color={0,127,255}));
+    connect(SMR_Taveprogram.port_a, EM.port_b1) annotation (Line(points={{-45.0909,
+            0.553846},{-16,0.553846},{-16,-6},{-10,-6}}, color={0,127,255}));
+    connect(parabolicTrough.Inlet, dual_Pipe_CTES_Controlled_Feedwater.port_charge_b)
+      annotation (Line(points={{-13.2857,-63.92},{-13.2857,-64},{13.9857,-64},{
+            13.9857,-65}},
+                   color={0,127,255}));
+    connect(trapezoid.y,add. u1) annotation (Line(points={{73,168},{73,164},{86,
+            164},{86,158},{92,158}},
+                           color={0,0,127}));
+    connect(trapezoid1.y,add. u2) annotation (Line(points={{73,132},{86,132},{
+            86,146},{92,146}},
+                           color={0,0,127}));
+    connect(add.y,sum1. u[1]) annotation (Line(points={{115,152},{114,152},{114,
+            138},{84,138},{84,164},{118,164},{118,158}},
+                                         color={0,0,127}));
+    annotation (Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,
+              -100},{200,100}}), graphics={
+          Ellipse(lineColor = {75,138,73},
+                  fillColor={255,255,255},
+                  fillPattern = FillPattern.Solid,
+                  extent={{-54,-102},{146,98}}),
+          Polygon(lineColor = {0,0,255},
+                  fillColor = {75,138,73},
+                  pattern = LinePattern.None,
+                  fillPattern = FillPattern.Solid,
+                  points={{16,62},{116,2},{16,-58},{16,62}})}),
+                                  Diagram(coordinateSystem(preserveAspectRatio=
+              false, extent={{-100,-100},{200,100}})),
+      experiment(
+        StopTime=1000000,
+        Interval=10,
+        __Dymola_Algorithm="Esdirk45a"),
+      Documentation(info="<html>
+<p>NuScale style reactor system. System has a nominal thermal output of 160MWt rather than the updated 200MWt.</p>
+<p>System is based upon report: Frick, Konor L. Status Report on the NuScale Module Developed in the Modelica Framework. United States: N. p., 2019. Web. doi:10.2172/1569288.</p>
+</html>"),
+      __Dymola_experimentSetupOutput(events=false));
+  end LWR_L2_Turbine_AdditionalFeedheater_Combination;
 end FWHPT;

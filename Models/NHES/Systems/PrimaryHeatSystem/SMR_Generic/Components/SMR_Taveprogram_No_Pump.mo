@@ -224,7 +224,7 @@ Real Tave=(Tcore_inlet.T+Tcore_exit.T)/2.0;
     annotation (Placement(transformation(extent={{-76,118},{-64,130}})));
   Modelica.Fluid.Sensors.Pressure Secondary_Side_Pressure(redeclare package
       Medium = Modelica.Media.Water.StandardWater)
-    annotation (Placement(transformation(extent={{70,60},{90,80}})));
+    annotation (Placement(transformation(extent={{70,62},{90,82}})));
   Modelica.Fluid.Sensors.SpecificEnthalpy Steam_exit_enthalpy(redeclare package
       Medium =         Modelica.Media.Water.StandardWater)
     annotation (Placement(transformation(extent={{18,56},{36,74}})));
@@ -300,7 +300,7 @@ equation
       pattern=LinePattern.Dash,
       thickness=0.5));
   connect(STHX.port_b_tube, Secondary_Side_Pressure.port) annotation (Line(
-        points={{27,12},{27,20},{74,20},{74,60},{80,60}},color={0,127,255}));
+        points={{27,12},{27,20},{74,20},{74,62},{80,62}},color={0,127,255}));
   connect(STHX.port_b_tube, Steam_exit_enthalpy.port)
     annotation (Line(points={{27,12},{27,56}}, color={0,127,255}));
   connect(STHX.port_a_tube, Feed_Enthalpy.port) annotation (Line(points={{27,

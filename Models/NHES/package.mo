@@ -44,8 +44,9 @@ import Modelica.Math;
 annotation (
     uses(
     Modelica(version="4.0.0"),
-    TRANSFORM(version="0.5")),
-    version="2",
+    TRANSFORM(version="0.5"),
+    ThermoCycle(version="2")),
+    version="3",
     Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}}),
       graphics={Bitmap(extent={{-92,-76},{86,92}}, fileName=
             "modelica://NHES/../../../HYBRID/Models/NHES/Resources/Images/Systems/Icon/IES_logo.png")}),
@@ -57,5 +58,6 @@ annotation (
 </ul>
 </html>"),
   conversion(from(version="1", script=
-          "modelica://NHES/Resources/Scripts/ConvertFromNHES_1.mos")));
+          "modelica://NHES/Resources/Scripts/ConvertFromNHES_1.mos"),
+      noneFromVersion="2"));
 end NHES;

@@ -8,7 +8,7 @@ model CS_SMR_Tave
  input SI.Power W_turbine "Turbine Output" annotation(Dialog(group="Inputs"));
  input SI.Power W_Setpoint "Turbine Setpoint" annotation(Dialog(group="Inputs"));
 
-  Modelica.Blocks.Sources.ContinuousClock clock(offset=0, startTime=300)
+  Modelica.Blocks.Sources.ContinuousClock clock(offset=0, startTime=0)
     annotation (Placement(transformation(extent={{-194,22},{-174,42}})));
   Modelica.Blocks.Logical.Greater greater5
     annotation (Placement(transformation(extent={{-154,62},{-134,42}})));

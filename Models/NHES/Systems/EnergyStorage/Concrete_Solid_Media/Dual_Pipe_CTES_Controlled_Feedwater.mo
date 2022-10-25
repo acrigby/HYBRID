@@ -37,6 +37,7 @@ model Dual_Pipe_CTES_Controlled_Feedwater
   TRANSFORM.Fluid.BoundaryConditions.Boundary_pT boundary4(
     redeclare package Medium =
         HTF,
+    use_p_in=true,
     use_T_in=true,
     p=5000000,
     T=373.15,
@@ -44,14 +45,6 @@ model Dual_Pipe_CTES_Controlled_Feedwater
     annotation (Placement(transformation(extent={{-10,-10},{10,10}},
         rotation=-90,
         origin={132,78})));
-  TRANSFORM.Fluid.Valves.ValveLinear TBV(
-    redeclare package Medium =
-        HTF,
-    dp_nominal=100000,
-    m_flow_nominal=50)                   annotation (Placement(transformation(
-        extent={{-8,8},{8,-8}},
-        rotation=90,
-        origin={132,52})));
   TRANSFORM.Fluid.Sensors.Pressure     sensor_p(redeclare package Medium =
        HTF,
       redeclare function iconUnit =
@@ -61,8 +54,6 @@ model Dual_Pipe_CTES_Controlled_Feedwater
         extent={{10,-10},{-10,10}},
         rotation=180,
         origin={120,14})));
-  Modelica.Blocks.Sources.Constant const9(k=50e5)
-    annotation (Placement(transformation(extent={{204,42},{184,62}})));
   TRANSFORM.Controls.LimPID PI_TBV(
     controllerType=Modelica.Blocks.Types.SimpleController.PI,
     k=-5e-7,
@@ -83,6 +74,7 @@ model Dual_Pipe_CTES_Controlled_Feedwater
   TRANSFORM.Fluid.BoundaryConditions.Boundary_pT boundary1(
     redeclare package Medium =
         HTF,
+    use_p_in=true,
     use_T_in=true,
     p=5000000,
     T=298.15,
@@ -123,24 +115,32 @@ model Dual_Pipe_CTES_Controlled_Feedwater
   Modelica.Fluid.Sensors.TemperatureTwoPort temperature3(redeclare package
       Medium = HTF)
     annotation (Placement(transformation(extent={{38,16},{58,36}})));
+  Modelica.Blocks.Sources.Ramp ramp(
+    height=-30e5,
+    duration=0.5e5,
+    offset=50e5,
+    startTime=1e5)
+    annotation (Placement(transformation(extent={{168,2},{188,22}})));
+  Modelica.Blocks.Sources.Ramp ramp1(
+    height=-42e5,
+    duration=0.7e5,
+    offset=50e5,
+    startTime=1e5)
+    annotation (Placement(transformation(extent={{-70,-92},{-50,-72}})));
+  Modelica.Blocks.Sources.Ramp ramp2(
+    height=-42e5,
+    duration=1e5,
+    offset=50e5,
+    startTime=1e5)
+    annotation (Placement(transformation(extent={{116,112},{136,132}})));
 equation
 
-  connect(const9.y,PI_TBV. u_s)
-    annotation (Line(points={{183,52},{170,52}},     color={0,0,127}));
   connect(sensor_p.p,PI_TBV. u_m) annotation (Line(points={{126,14},{158,14},{158,
           40}},              color={0,0,127}));
-  connect(TBV.port_b,boundary4. ports[1])
-    annotation (Line(points={{132,60},{132,68}},   color={0,127,255}));
-  connect(PI_TBV.y,TBV. opening)
-    annotation (Line(points={{147,52},{138.4,52}},     color={0,0,127}));
-  connect(TBV.port_a, sensor_p.port)
-    annotation (Line(points={{132,44},{132,24},{120,24}}, color={0,127,255}));
   connect(port_charge_b, pump_SimpleMassFlow2.port_b)
     annotation (Line(points={{-102,-50},{-90,-50}}, color={0,127,255}));
   connect(boundary1.ports[1], pump_SimpleMassFlow2.port_a) annotation (Line(
         points={{-8,-64},{-8,-68},{-56,-68},{-56,-50},{-66,-50}}, color={0,127,255}));
-  connect(port_charge_a, temperature.port_a) annotation (Line(points={{-102,42},
-          {-78,42},{-78,36},{-72,36}}, color={0,127,255}));
   connect(CTES.Charge_Inlet, temperature.port_b) annotation (Line(points={{-26.3,
           10.7},{-46,10.7},{-46,36},{-52,36}}, color={0,127,255}));
   connect(CTES.Charge_Outlet, temperature1.port_a) annotation (Line(points={{-26.3,
@@ -187,6 +187,16 @@ equation
       index=-1,
       extent={{-3,-6},{-3,-6}},
       horizontalAlignment=TextAlignment.Right));
+  connect(ramp.y, PI_TBV.u_s) annotation (Line(points={{189,12},{180,12},{180,
+          52},{170,52}}, color={0,0,127}));
+  connect(ramp1.y, boundary1.p_in) annotation (Line(points={{-49,-82},{6,-82},{
+          6,-42},{-1.33227e-15,-42}}, color={0,0,127}));
+  connect(ramp2.y, boundary4.p_in) annotation (Line(points={{137,122},{137,118},
+          {140,118},{140,90}}, color={0,0,127}));
+  connect(sensor_p.port, boundary4.ports[1]) annotation (Line(points={{120,24},
+          {120,60},{132,60},{132,68}}, color={0,127,255}));
+  connect(port_charge_a, temperature.port_a) annotation (Line(points={{-102,42},
+          {-78,42},{-78,36},{-72,36}}, color={0,127,255}));
   annotation (experiment(
       StopTime=864000,
       __Dymola_NumberOfIntervals=1957,

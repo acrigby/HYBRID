@@ -1260,7 +1260,7 @@ package FWHPT
           EnergyStorage.Concrete_Solid_Media.BaseClasses.HeatCrete,
       Hot_Con_Start=443.15,
       Cold_Con_Start=363.15)
-      annotation (Placement(transformation(extent={{-40,-38},{30,32}})));
+      annotation (Placement(transformation(extent={{-38,-38},{32,32}})));
 
     TRANSFORM.Fluid.BoundaryConditions.Boundary_ph Discharge_Exit(
       redeclare package Medium =
@@ -1342,12 +1342,12 @@ package FWHPT
                                                     color={0,127,255}));
     connect(Discharge_Signal.y, Discharge_Valve.opening)
       annotation (Line(points={{59,20},{87,20},{87,12.2}}, color={0,0,127}));
-    connect(CTES.Charge_Outlet, Condensate_out.port_a) annotation (Line(points={{-32.3,
-            -15.6},{-32.3,-14},{-46,-14},{-46,-34},{-52,-34}},
+    connect(CTES.Charge_Outlet, Condensate_out.port_a) annotation (Line(points={{-30.3,
+            -15.6},{-30.3,-14},{-46,-14},{-46,-34},{-52,-34}},
                                                       color={0,127,255}));
-    connect(CTES.Discharge_Inlet, Discharge_Valve.port_b) annotation (Line(points={{22.3,
+    connect(CTES.Discharge_Inlet, Discharge_Valve.port_b) annotation (Line(points={{24.3,
             -17.7},{62.15,-17.7},{62.15,-3},{68,-3}}, color={0,127,255}));
-    connect(CTES.Discharge_Outlet, Discharge_out.port_a) annotation (Line(points={{23,4.7},
+    connect(CTES.Discharge_Outlet, Discharge_out.port_a) annotation (Line(points={{25,4.7},
             {62,4.7},{62,-52},{68,-52}},                   color={0,127,255}));
     connect(Discharge_out.port_b, Discharge_Exit.ports[1])
       annotation (Line(points={{100,-52},{120,-52},{120,-44},{126,-44}},
@@ -1374,7 +1374,7 @@ package FWHPT
     connect(boundary.ports[1], solarCollectorIncSchott1.InFlow) annotation (Line(
           points={{-142,-64},{-118,-64},{-118,-10.6364}}, color={0,127,255}));
     connect(solarCollectorIncSchott1.OutFlow, CTES.Charge_Inlet) annotation (Line(
-          points={{-118,59.3636},{-118,66},{-46,66},{-46,4.7},{-32.3,4.7}}, color=
+          points={{-118,59.3636},{-118,66},{-46,66},{-46,4.7},{-30.3,4.7}}, color=
            {0,0,255}));
     annotation (experiment(
         StopTime=864000,
@@ -1388,7 +1388,7 @@ package FWHPT
     "TES use case demonstration of a NuScale-style LWR operating within an energy arbitrage IES, storing and dispensing energy on demand from a two tank molten salt energy storage system nominally using HITEC salt to store heat."
    parameter Real fracNominal_BOP = abs(EM.port_b2_nominal.m_flow)/EM.port_a1_nominal.m_flow;
    parameter Real fracNominal_Other = sum(abs(EM.port_b3_nominal_m_flow))/EM.port_a1_nominal.m_flow;
-   parameter SI.Time timeScale=60*60 "Time scale of first table column";
+   parameter SI.Time timeScale=2*60*60 "Time scale of first table column";
    parameter String fileName=Modelica.Utilities.Files.loadResource(
       "modelica://NHES/Resources/Data/RAVEN/DNI_timeSeries.txt")
     "File where matrix is stored";
@@ -1450,18 +1450,18 @@ package FWHPT
       port_b_nominal(p=EM.port_a2_nominal.p, h=EM.port_a2_nominal.h),
       redeclare
         BalanceOfPlant.Turbine.ControlSystems.CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl_Combined_mflow
-        CS(electric_demand_int=SC.demand_BOP.y[1]))
+        CS(electric_demand=sum2.y))
       annotation (Placement(transformation(extent={{54,-18},{94,22}})));
     EnergyStorage.Concrete_Solid_Media.Dual_Pipe_CTES_Controlled_Feedwater
       dual_Pipe_CTES_Controlled_Feedwater(redeclare
         NHES.Systems.EnergyStorage.Concrete_Solid_Media.CS_Basic CS(DNI_Input=
             DNI_Input.y[1]))
       annotation (Placement(transformation(extent={{10,-76},{72,-32}})));
-    SecondaryEnergySupply.ConcentratedSolar1.ParabolicTrough parabolicTrough(DNI_Input
-        =DNI_Input.y[1])
+    SecondaryEnergySupply.ConcentratedSolar1.ParabolicTrough parabolicTrough(DNI_Input=
+         DNI_Input.y[1])
       annotation (Placement(transformation(extent={{-60,-74},{0,-32}})));
     Modelica.Blocks.Sources.Constant delayStart(k=0)
-      annotation (Placement(transformation(extent={{-76,124},{-56,144}})));
+      annotation (Placement(transformation(extent={{-34,78},{-14,98}})));
     Modelica.Blocks.Sources.Sine sine(
       amplitude=17.5e6,
       f=1/20000,
@@ -1492,6 +1492,25 @@ package FWHPT
       annotation (Placement(transformation(extent={{4,114},{24,134}})));
     Modelica.Blocks.Math.Sum sum1
       annotation (Placement(transformation(extent={{120,148},{140,168}})));
+    Modelica.Blocks.Sources.Trapezoid trapezoid2(
+      amplitude=7e6,
+      rising=100,
+      width=9800,
+      falling=100,
+      period=20000,
+      offset=48.6e6,
+      startTime=1e6)
+      annotation (Placement(transformation(extent={{18,80},{38,100}})));
+    Modelica.Blocks.Math.Add         add1
+      annotation (Placement(transformation(extent={{60,64},{80,84}})));
+    Modelica.Blocks.Math.Sum sum2
+      annotation (Placement(transformation(extent={{94,64},{114,84}})));
+    Modelica.Blocks.Noise.UniformNoise uniformNoise(
+      samplePeriod=10000,
+      y_off=0,
+      startTime=2e5,
+      y_min=-1e6,
+      y_max=9e6) annotation (Placement(transformation(extent={{18,48},{38,68}})));
   equation
       dual_Pipe_CTES_Controlled_Feedwater.CS.FeedwaterTemperature = BOP.sensor_T2.T;
     connect(SY.port_Grid, sensorW.port_a)
@@ -1535,6 +1554,12 @@ package FWHPT
     connect(add.y,sum1. u[1]) annotation (Line(points={{115,152},{114,152},{114,
             138},{84,138},{84,164},{118,164},{118,158}},
                                          color={0,0,127}));
+    connect(trapezoid2.y, add1.u1) annotation (Line(points={{39,90},{39,86},{52,
+            86},{52,80},{58,80}}, color={0,0,127}));
+    connect(add1.y, sum2.u[1])
+      annotation (Line(points={{81,74},{92,74}}, color={0,0,127}));
+    connect(uniformNoise.y, add1.u2) annotation (Line(points={{39,58},{52,58},{52,
+            68},{58,68}}, color={0,0,127}));
     annotation (Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,
               -100},{200,100}}), graphics={
           Ellipse(lineColor = {75,138,73},

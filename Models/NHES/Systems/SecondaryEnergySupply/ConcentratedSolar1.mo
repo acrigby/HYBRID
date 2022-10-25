@@ -230,14 +230,14 @@ package ConcentratedSolar1
 
    ThermoCycle.Components.Units.Solar.SolarField_SchottSopo         solarCollectorIncSchott1(
       Nt=12,
-      Mdotnom=20,
+      Mdotnom=30,
       redeclare model FluidHeatTransferModel =
           ThermoCycle.Components.HeatFlow.HeatTransfer.Ideal,
       redeclare
         ThermoCycle.Components.HeatFlow.Walls.SolarAbsorber.Geometry.Schott_SopoNova.Schott_2008_PTR70_Vacuum
         CollectorGeometry(L=16),
       redeclare package Medium1 = Modelica.Media.Water.StandardWater,
-      Ns=2,
+      Ns=60,
       Tstart_inlet=298.15,
       Tstart_outlet=373.15,
       pstart=1000000)
@@ -247,14 +247,9 @@ package ConcentratedSolar1
     Modelica.Blocks.Sources.Constant const4(k=0)
       annotation (Placement(transformation(extent={{-60,2},{-40,22}})));
     Modelica.Blocks.Sources.Constant const2(k=25 + 273.15)
-      annotation (Placement(transformation(extent={{-60,-26},{-40,-6}})));
-    Modelica.Blocks.Sources.Step step1(
-      startTime=100,
-      height=1000,
-      offset=10)
-      annotation (Placement(transformation(extent={{-58,-58},{-38,-38}})));
-    TRANSFORM.Fluid.Interfaces.FluidPort_State Outlet(redeclare package Medium
-        = Modelica.Media.Water.StandardWater) annotation (Placement(
+      annotation (Placement(transformation(extent={{-74,-34},{-54,-14}})));
+    TRANSFORM.Fluid.Interfaces.FluidPort_State Outlet(redeclare package Medium =
+          Modelica.Media.Water.StandardWater) annotation (Placement(
           transformation(extent={{148,32},{168,52}}), iconTransformation(extent={{
               88,34},{108,54}})));
     TRANSFORM.Fluid.Interfaces.FluidPort_Flow Inlet(redeclare package Medium =
@@ -270,8 +265,8 @@ package ConcentratedSolar1
             42},{-2,42},{-2,11.2},{6.33333,11.2}}, color={0,0,127}));
     connect(const4.y, solarCollectorIncSchott1.Theta) annotation (Line(points={{-39,
             12},{-4,12},{-4,1.81818},{6.5,1.81818}}, color={0,0,127}));
-    connect(const2.y, solarCollectorIncSchott1.Tamb) annotation (Line(points={{-39,
-            -16},{-2,-16},{-2,-8.65455},{6.16667,-8.65455}}, color={0,0,127}));
+    connect(const2.y, solarCollectorIncSchott1.Tamb) annotation (Line(points={{-53,-24},
+            {-22,-24},{-22,-8.65455},{6.16667,-8.65455}},    color={0,0,127}));
     connect(solarCollectorIncSchott1.OutFlow, Outlet)
       annotation (Line(points={{24,15.5636},{24,42},{158,42}}, color={0,0,255}));
     connect(solarCollectorIncSchott1.InFlow, Inlet) annotation (Line(points={{24,

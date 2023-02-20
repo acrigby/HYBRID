@@ -1,5 +1,5 @@
 within NHES.Systems.EnergyStorage.Concrete_Solid_Media;
-model Dual_Pipe_CTES_Controlled_Feedwater
+model Dual_Pipe_CTES_Controlled_FeedwaterBypass_200
    extends BaseClasses.Partial_SubSystem_A(
     redeclare replaceable CS_Dummy CS,
     redeclare replaceable ED_Dummy ED,
@@ -16,8 +16,8 @@ model Dual_Pipe_CTES_Controlled_Feedwater
     dY=0.6,
     redeclare package TES_Med = BaseClasses.HeatCrete,
     redeclare package HTF = HTF,
-    Hot_Con_Start=453.15,
-    Cold_Con_Start=443.15)
+    Hot_Con_Start=513.15,
+    Cold_Con_Start=513.15)
     annotation (Placement(transformation(extent={{-34,-32},{36,38}})));
 
   TRANSFORM.Fluid.Interfaces.FluidPort_Flow port_charge_a(redeclare package
@@ -122,17 +122,26 @@ model Dual_Pipe_CTES_Controlled_Feedwater
     startTime=1e5)
     annotation (Placement(transformation(extent={{168,2},{188,22}})));
   Modelica.Blocks.Sources.Ramp ramp1(
-    height=-35e5,
+    height=0,
     duration=0.7e5,
     offset=50e5,
     startTime=1e5)
     annotation (Placement(transformation(extent={{-68,-92},{-48,-72}})));
   Modelica.Blocks.Sources.Ramp ramp2(
-    height=-35e5,
+    height=0,
     duration=0.7e5,
     offset=50e5,
     startTime=1e5)
     annotation (Placement(transformation(extent={{116,112},{136,132}})));
+  TRANSFORM.Fluid.Valves.ValveLinear TCV(
+    redeclare package Medium = Modelica.Media.Water.StandardWater,
+    dp_start=100000,
+    m_flow_start=0,
+    dp_nominal=100000,
+    m_flow_nominal=5)  annotation (Placement(transformation(
+        extent={{8,8},{-8,-8}},
+        rotation=180,
+        origin={140,-32})));
 equation
 
   connect(sensor_p.p,PI_TBV. u_m) annotation (Line(points={{126,14},{158,14},{158,
@@ -200,6 +209,24 @@ equation
           {120,60},{132,60},{132,68}}, color={0,127,255}));
   connect(port_charge_a, temperature.port_a) annotation (Line(points={{-102,42},
           {-78,42},{-78,36},{-72,36}}, color={0,127,255}));
+  connect(sensor_m_flow.port_b, TCV.port_a) annotation (Line(points={{90,28},{
+          128,28},{128,-32},{132,-32}}, color={0,127,255}));
+  connect(TCV.port_b, port_discharge_a) annotation (Line(points={{148,-32},{152,
+          -32},{152,-62},{102,-62}}, color={0,127,255}));
+  connect(actuatorBus.DFV_Opening, TCV.opening) annotation (Line(
+      points={{30,100},{106,100},{106,56},{140,56},{140,-25.6}},
+      color={111,216,99},
+      pattern=LinePattern.Dash,
+      thickness=0.5), Text(
+      string="%first",
+      index=-1,
+      extent={{-3,6},{-3,6}},
+      horizontalAlignment=TextAlignment.Right));
+  connect(sensorBus.ConcOutT, temperature1.T) annotation (Line(
+      points={{-30,100},{-30,42},{-42,42},{-42,2},{-70,2},{-70,-5}},
+      color={239,82,82},
+      pattern=LinePattern.Dash,
+      thickness=0.5));
   annotation (experiment(
       StopTime=864000,
       __Dymola_NumberOfIntervals=1957,
@@ -211,4 +238,4 @@ equation
 <p>This particular controlled CTES model is for use with the Nuscale stage-by-stage turbine model. The DCV is within the model itself, allowing the CTES to control its own pressure rise (surrogate for a pump) and flow characteristic. </p>
 <p>That does mean that the demand and power levels need to be piped into the model, and a control system for the DCV needs to be put in place. </p>
 </html>"));
-end Dual_Pipe_CTES_Controlled_Feedwater;
+end Dual_Pipe_CTES_Controlled_FeedwaterBypass_200;

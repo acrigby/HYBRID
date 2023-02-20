@@ -1,33 +1,38 @@
 within NHES.Systems.EnergyStorage.Concrete_Solid_Media.Examples;
-model Dual_Pipe_CTES
+model Dual_Pipe_CTES_Therminol
   extends Modelica.Icons.Example;
   parameter Modelica.Units.SI.MassFlowRate shell_flow_shim=1.5;
   parameter Modelica.Units.SI.MassFlowRate tube_flow_shim=1.5;
-  Components.Dual_Pipe_Model CTES(
+  Components.Dual_Pipe_Model_Therminol CTES(
     nY=7,
     nX=9,
     tau=0.05,
     nPipes=250,
     dX=150,
     dY=0.3,
+    redeclare package HTF =
+        TRANSFORM.Media.Fluids.Therminol_66.LinearTherminol66_A_250C,
     redeclare package TES_Med = BaseClasses.HeatCrete,
     Hot_Con_Start=443.15,
     Cold_Con_Start=363.15)
     annotation (Placement(transformation(extent={{-34,-28},{36,42}})));
 
   TRANSFORM.Fluid.BoundaryConditions.Boundary_ph Condensate(
-    redeclare package Medium = Modelica.Media.Examples.TwoPhaseWater,
+    redeclare package Medium =
+        TRANSFORM.Media.Fluids.Therminol_66.LinearTherminol66_A_250C,
     p=2000000,
     h=500e3,
     nPorts=1) annotation (Placement(transformation(extent={{100,48},{80,68}})));
   TRANSFORM.Fluid.BoundaryConditions.Boundary_ph Discharge_Exit(
-    redeclare package Medium = Modelica.Media.Examples.TwoPhaseWater,
+    redeclare package Medium =
+        TRANSFORM.Media.Fluids.Therminol_66.LinearTherminol66_A_250C,
     p=110000,
     h=2500e3,
     nPorts=1)
     annotation (Placement(transformation(extent={{-94,-38},{-74,-18}})));
   TRANSFORM.Fluid.BoundaryConditions.Boundary_ph Charge_Source(
-    redeclare package Medium = Modelica.Media.Examples.TwoPhaseWater,
+    redeclare package Medium =
+        TRANSFORM.Media.Fluids.Therminol_66.LinearTherminol66_A_250C,
     p=2130000,
     h=3000e3,
     nPorts=1) annotation (Placement(transformation(extent={{-116,4},{-96,24}})));
@@ -41,15 +46,18 @@ model Dual_Pipe_CTES
     startTime=90000)
     annotation (Placement(transformation(extent={{-102,36},{-82,56}})));
   TRANSFORM.Fluid.Sensors.SpecificEnthalpyTwoPort Condensate_out(redeclare
-      package Medium = Modelica.Media.Examples.TwoPhaseWater)
+      package Medium =
+        TRANSFORM.Media.Fluids.Therminol_66.LinearTherminol66_A_250C)
     annotation (Placement(transformation(extent={{18,70},{56,46}})));
   TRANSFORM.Fluid.Valves.ValveLinear Charge_Valve(
-    redeclare package Medium = Modelica.Media.Examples.TwoPhaseWater,
+    redeclare package Medium =
+        TRANSFORM.Media.Fluids.Therminol_66.LinearTherminol66_A_250C,
     dp_nominal=100000,
     m_flow_nominal=10)
     annotation (Placement(transformation(extent={{-78,0},{-46,32}})));
   TRANSFORM.Fluid.Sensors.SpecificEnthalpyTwoPort Discharge_out(redeclare
-      package Medium = Modelica.Media.Examples.TwoPhaseWater)
+      package Medium =
+        TRANSFORM.Media.Fluids.Therminol_66.LinearTherminol66_A_250C)
     annotation (Placement(transformation(extent={{-28,-38},{-60,-18}})));
   Modelica.Blocks.Sources.Trapezoid Discharge_Signal(
     amplitude=1,
@@ -61,12 +69,14 @@ model Dual_Pipe_CTES
     startTime=135000)
     annotation (Placement(transformation(extent={{44,20},{64,40}})));
   TRANSFORM.Fluid.Valves.ValveLinear Discharge_Valve(
-    redeclare package Medium = Modelica.Media.Examples.TwoPhaseWater,
+    redeclare package Medium =
+        TRANSFORM.Media.Fluids.Therminol_66.LinearTherminol66_A_250C,
     dp_nominal=150000,
     m_flow_nominal=10)
     annotation (Placement(transformation(extent={{112,-12},{74,26}})));
   TRANSFORM.Fluid.BoundaryConditions.Boundary_ph Discharge_Source(
-    redeclare package Medium = Modelica.Media.Examples.TwoPhaseWater,
+    redeclare package Medium =
+        TRANSFORM.Media.Fluids.Therminol_66.LinearTherminol66_A_250C,
     p=250000,
     h=500e3,
     nPorts=1) annotation (Placement(transformation(extent={{152,-4},{132,16}})));
@@ -99,4 +109,4 @@ equation
       __Dymola_Algorithm="Esdirk45a"),
     Diagram(coordinateSystem(extent={{-120,-100},{160,100}})),
     Icon(coordinateSystem(extent={{-120,-100},{160,100}})));
-end Dual_Pipe_CTES;
+end Dual_Pipe_CTES_Therminol;

@@ -1,12 +1,6 @@
 within NHES.Systems.BalanceOfPlant.Turbine.ControlSystems;
 model
-  CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl_Combined_mflow
-
-
-
-
-
-
+  CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl_Combined_mflow_200
 
 
 
@@ -82,21 +76,34 @@ model
   Modelica.Blocks.Sources.Constant const10(k=67)
     annotation (Placement(transformation(extent={{-110,124},{-90,144}})));
   PrimaryHeatSystem.HTGR.VarLimVarK_PID PID1(
-    use_k_in=true,
+    use_k_in=false,
+    use_lowlim_in=false,
     use_uplim_in=false,
     controllerType=Modelica.Blocks.Types.SimpleController.PI,
-    k=5e-5,
+    k=-1e-7,
     Ti=5,
-    yMax=-0.048,
+    yMax=-0.03,
     yMin=-0.099,
-    xi_start=1500)
-           annotation (Placement(transformation(extent={{-80,-60},{-60,-40}})));
+    initType=Modelica.Blocks.Types.Init.NoInit,
+    xi_start=1500,
+    reset=TRANSFORM.Types.Reset.Input)
+           annotation (Placement(transformation(extent={{-78,-60},{-58,-40}})));
   Modelica.Blocks.Sources.Ramp ramp(
     height=-5.00001e-5,
-    duration=1e4,
+    duration=10,
     offset=5e-5,
-    startTime=3e4)
+    startTime=5)
     annotation (Placement(transformation(extent={{-160,2},{-140,22}})));
+  Modelica.Blocks.Sources.Ramp ramp1(
+    height=0.01,
+    duration=5e4,
+    offset=-0.048,
+    startTime=2e5)
+    annotation (Placement(transformation(extent={{-172,-34},{-152,-14}})));
+  Modelica.Blocks.Sources.BooleanStep booleanStep(startTime=2e5)
+    annotation (Placement(transformation(extent={{-156,-88},{-136,-68}})));
+  Modelica.Blocks.Sources.Constant const3(k=0)
+    annotation (Placement(transformation(extent={{-228,-66},{-208,-46}})));
 equation
   connect(const7.y,add1. u2) annotation (Line(points={{-17.6,-24},{-10,-24}},
                                       color={0,0,127}));
@@ -188,12 +195,14 @@ equation
       index=-1,
       extent={{-3,6},{-3,6}},
       horizontalAlignment=TextAlignment.Right));
-  connect(PID1.y, timer.u) annotation (Line(points={{-59,-50},{-38,-50},{-38,-40},
-          {-32.8,-40}}, color={0,0,127}));
-  connect(realExpression.y, PID1.u_s) annotation (Line(points={{-155.3,-48},{-120,
-          -48},{-120,-50},{-82,-50}}, color={0,0,127}));
+  connect(PID1.y, timer.u) annotation (Line(points={{-57,-50},{-38,-50},{-38,
+          -40},{-32.8,-40}},
+                        color={0,0,127}));
+  connect(realExpression.y, PID1.u_s) annotation (Line(points={{-155.3,-48},{
+          -120,-48},{-120,-50},{-80,-50}},
+                                      color={0,0,127}));
   connect(sensorBus.Power, PID1.u_m) annotation (Line(
-      points={{-30,-100},{-30,-68},{-70,-68},{-70,-62}},
+      points={{-30,-100},{-30,-68},{-68,-68},{-68,-62}},
       color={239,82,82},
       pattern=LinePattern.Dash,
       thickness=0.5), Text(
@@ -201,8 +210,9 @@ equation
       index=-1,
       extent={{6,3},{6,3}},
       horizontalAlignment=TextAlignment.Left));
-  connect(ramp.y, PID1.prop_k) annotation (Line(points={{-139,12},{-102,12},{
-          -102,-38},{-84,-38},{-84,-32},{-62.6,-32},{-62.6,-38.6}}, color={0,0,
-          127}));
+  connect(booleanStep.y, PID1.trigger) annotation (Line(points={{-135,-78},{-76,
+          -78},{-76,-62}}, color={255,0,255}));
+  connect(const3.y, PID1.y_reset_in) annotation (Line(points={{-207,-56},{-120,
+          -56},{-120,-58},{-80,-58}}, color={0,0,127}));
 end
-  CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl_Combined_mflow;
+  CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl_Combined_mflow_200;

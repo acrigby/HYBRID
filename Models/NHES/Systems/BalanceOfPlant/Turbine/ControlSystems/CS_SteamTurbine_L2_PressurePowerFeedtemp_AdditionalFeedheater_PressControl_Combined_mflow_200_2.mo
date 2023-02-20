@@ -1,13 +1,6 @@
 within NHES.Systems.BalanceOfPlant.Turbine.ControlSystems;
 model
-  CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl_Combined_mflow
-
-
-
-
-
-
-
+  CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl_Combined_mflow_200_2
 
 
   extends NHES.Systems.BalanceOfPlant.Turbine.BaseClasses.Partial_ControlSystem;
@@ -83,7 +76,7 @@ model
     annotation (Placement(transformation(extent={{-110,124},{-90,144}})));
   PrimaryHeatSystem.HTGR.VarLimVarK_PID PID1(
     use_k_in=true,
-    use_uplim_in=false,
+    use_uplim_in=true,
     controllerType=Modelica.Blocks.Types.SimpleController.PI,
     k=5e-5,
     Ti=5,
@@ -97,6 +90,12 @@ model
     offset=5e-5,
     startTime=3e4)
     annotation (Placement(transformation(extent={{-160,2},{-140,22}})));
+  Modelica.Blocks.Sources.Ramp ramp1(
+    height=0.02,
+    duration=5e4,
+    offset=-0.048,
+    startTime=3e5)
+    annotation (Placement(transformation(extent={{-164,-34},{-144,-14}})));
 equation
   connect(const7.y,add1. u2) annotation (Line(points={{-17.6,-24},{-10,-24}},
                                       color={0,0,127}));
@@ -204,5 +203,7 @@ equation
   connect(ramp.y, PID1.prop_k) annotation (Line(points={{-139,12},{-102,12},{
           -102,-38},{-84,-38},{-84,-32},{-62.6,-32},{-62.6,-38.6}}, color={0,0,
           127}));
+  connect(ramp1.y, PID1.upperlim) annotation (Line(points={{-143,-24},{-82,-24},
+          {-82,-30},{-76,-30},{-76,-39}}, color={0,0,127}));
 end
-  CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl_Combined_mflow;
+  CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl_Combined_mflow_200_2;

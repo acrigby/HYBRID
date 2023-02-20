@@ -33,8 +33,8 @@ model Dual_Pipe_CTES_Controlled
         extent={{5,5},{-5,-5}},
         rotation=180,
         origin={73,-43})));
-  TRANSFORM.Fluid.Sensors.MassFlowRate sensor_m_flow2(redeclare package Medium
-      = Modelica.Media.Examples.TwoPhaseWater)
+  TRANSFORM.Fluid.Sensors.MassFlowRate sensor_m_flow2(redeclare package Medium =
+        Modelica.Media.Examples.TwoPhaseWater)
     annotation (Placement(transformation(extent={{-4,4},{4,-4}},
         rotation=90,
         origin={100,-36})));

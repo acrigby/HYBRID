@@ -53,7 +53,7 @@ model CS_SteamTurbine_L2_PressurePowerFeedtemp_HTGR
   Modelica.Blocks.Sources.Constant const(k=data.Q_Nom)
     annotation (Placement(transformation(extent={{-78,-22},{-64,-8}})));
   Modelica.Blocks.Sources.Constant const3(k=540 + 273.15)
-    annotation (Placement(transformation(extent={{-180,44},{-160,64}})));
+    annotation (Placement(transformation(extent={{-180,46},{-160,66}})));
   TRANSFORM.Controls.LimPID FWCP_Speed(
     controllerType=Modelica.Blocks.Types.SimpleController.PI,
     k=-5e-2,
@@ -144,7 +144,7 @@ equation
       extent={{6,3},{6,3}},
       horizontalAlignment=TextAlignment.Left));
   connect(const3.y, FWCP_Speed.u_s)
-    annotation (Line(points={{-159,54},{-50,54},{-50,40},{-42,40}},
+    annotation (Line(points={{-159,56},{-50,56},{-50,40},{-42,40}},
                                                  color={0,0,127}));
   connect(FWCP_Speed.y, add.u2)
     annotation (Line(points={{-19,40},{0,40}}, color={0,0,127}));
@@ -189,8 +189,8 @@ equation
                           color={0,0,127}));
   connect(greater5.y,switch_P_setpoint_TCV. u2)
     annotation (Line(points={{-157,24},{-140,24}},   color={255,0,255}));
-  connect(const3.y, switch_P_setpoint_TCV.u3) annotation (Line(points={{-159,54},
-          {-154,54},{-154,16},{-140,16}}, color={0,0,127}));
+  connect(const3.y, switch_P_setpoint_TCV.u3) annotation (Line(points={{-159,56},
+          {-154,56},{-154,16},{-140,16}}, color={0,0,127}));
   connect(switch_P_setpoint_TCV.y, FWCP_Speed.u_m) annotation (Line(points={{
           -117,24},{-110,24},{-110,42},{-62,42},{-62,20},{-30,20},{-30,28}},
         color={0,0,127}));

@@ -1,5 +1,5 @@
 within NHES.Systems.EnergyStorage.Concrete_Solid_Media;
-model CS_Basic
+model CS_Bypass_200
 
   extends BaseClasses.Partial_ControlSystem;
 
@@ -8,16 +8,12 @@ model CS_Basic
   input Real DNI_Input
   annotation(Dialog(tab="General"));
 
-  Modelica.Blocks.Sources.Constant const1(k=1)
-    annotation (Placement(transformation(extent={{11,-11},{-11,11}},
-        rotation=180,
-        origin={-11,11})));
   Modelica.Blocks.Math.Add         add3
     annotation (Placement(transformation(extent={{-102,50},{-82,70}})));
   Modelica.Blocks.Sources.RealExpression
                                    realExpression(y=FeedwaterTemperature)
     annotation (Placement(transformation(extent={{-246,-64},{-184,-34}})));
-  Modelica.Blocks.Sources.Constant const2(k=148 + 273)
+  Modelica.Blocks.Sources.Constant const2(k=200 + 273)
     annotation (Placement(transformation(extent={{-238,-10},{-214,14}})));
   PrimaryHeatSystem.HTGR.VarLimVarK_PID PID1(
     use_k_in=true,
@@ -25,14 +21,14 @@ model CS_Basic
     k=1e-1,
     Ti=5,
     yMax=12000,
-    yMin=0)
+    yMin=1000)
            annotation (Placement(transformation(extent={{-174,22},{-154,42}})));
   Modelica.Blocks.Sources.Ramp ramp(
-    height=1,
-    duration=1e5,
+    height=1e-4,
+    duration=2e5,
     offset=1e-7,
-    startTime=5e4)
-    annotation (Placement(transformation(extent={{-228,62},{-208,82}})));
+    startTime=1e4)
+    annotation (Placement(transformation(extent={{-228,64},{-208,84}})));
   Modelica.Blocks.Sources.Ramp ramp2(
     height=0,
     duration=1e4,
@@ -48,29 +44,18 @@ model CS_Basic
     annotation (Placement(transformation(extent={{-170,-126},{-146,-102}})));
   Modelica.Blocks.Logical.Switch switch1
     annotation (Placement(transformation(extent={{-68,-58},{-48,-38}})));
+  Modelica.Blocks.Sources.Constant const4(k=50)
+    annotation (Placement(transformation(extent={{-128,-40},{-104,-16}})));
   Modelica.Blocks.Sources.Constant const5(k=1)
     annotation (Placement(transformation(extent={{-136,-156},{-112,-132}})));
-  PrimaryHeatSystem.HTGR.VarLimVarK_PID PID2(
-    use_k_in=false,
-    controllerType=Modelica.Blocks.Types.SimpleController.PI,
-    k=1,
-    Ti=15,
-    yMax=100,
-    yMin=5)
-           annotation (Placement(transformation(extent={{-124,-30},{-104,-10}})));
-  Modelica.Blocks.Sources.Constant const4(k=140 + 273)
-    annotation (Placement(transformation(extent={{-160,-32},{-136,-8}})));
+  Modelica.Blocks.Sources.Ramp ramp1(
+    height=1,
+    duration=1e4,
+    offset=0,
+    startTime=2e6)
+    annotation (Placement(transformation(extent={{-68,4},{-48,24}})));
 equation
 
-  connect(actuatorBus.DFV_Opening, const1.y) annotation (Line(
-      points={{30,-100},{30,11},{1.1,11}},
-      color={111,216,99},
-      pattern=LinePattern.Dash,
-      thickness=0.5), Text(
-      string="%first",
-      index=-1,
-      extent={{6,3},{6,3}},
-      horizontalAlignment=TextAlignment.Left));
   connect(actuatorBus.DischargePumpSpeed, add3.y) annotation (Line(
       points={{30,-100},{30,60},{-81,60}},
       color={111,216,99},
@@ -84,14 +69,17 @@ equation
           54},{-104,54}}, color={0,0,127}));
   connect(ramp2.y, add3.u1) annotation (Line(points={{-131,100},{-120,100},{-120,
           66},{-104,66}}, color={0,0,127}));
-  connect(ramp.y, PID1.prop_k) annotation (Line(points={{-207,72},{-156,72},{-156,
-          43.4},{-156.6,43.4}}, color={0,0,127}));
+  connect(ramp.y, PID1.prop_k) annotation (Line(points={{-207,74},{-156,74},{
+          -156,43.4},{-156.6,43.4}},
+                                color={0,0,127}));
   connect(realExpression1.y, greater.u1) annotation (Line(points={{-134.9,-79},
           {-125.45,-79},{-125.45,-78},{-116,-78}}, color={0,0,127}));
   connect(const3.y, greater.u2) annotation (Line(points={{-144.8,-114},{-120,
           -114},{-120,-92},{-116,-92},{-116,-86}}, color={0,0,127}));
   connect(greater.y, switch1.u2) annotation (Line(points={{-93,-78},{-76,-78},{
           -76,-48},{-70,-48}}, color={255,0,255}));
+  connect(const4.y, switch1.u1) annotation (Line(points={{-102.8,-28},{-78,-28},
+          {-78,-40},{-70,-40}}, color={0,0,127}));
   connect(const5.y, switch1.u3) annotation (Line(points={{-110.8,-144},{-110.8,
           -120},{-70,-120},{-70,-56}}, color={0,0,127}));
   connect(actuatorBus.ChargePump, switch1.y) annotation (Line(
@@ -103,16 +91,15 @@ equation
       index=-1,
       extent={{6,3},{6,3}},
       horizontalAlignment=TextAlignment.Left));
-  connect(PID2.y, switch1.u1) annotation (Line(points={{-103,-20},{-78,-20},{
-          -78,-40},{-70,-40}}, color={0,0,127}));
-  connect(sensorBus.ConcOutT, PID2.u_m) annotation (Line(
-      points={{-30,-100},{-30,-62},{-112,-62},{-112,-66},{-114,-66},{-114,-32}},
-      color={239,82,82},
+  connect(actuatorBus.DFV_Opening, ramp1.y) annotation (Line(
+      points={{30,-100},{30,14},{-47,14}},
+      color={111,216,99},
       pattern=LinePattern.Dash,
-      thickness=0.5));
-
-  connect(const4.y, PID2.u_s)
-    annotation (Line(points={{-134.8,-20},{-126,-20}}, color={0,0,127}));
+      thickness=0.5), Text(
+      string="%first",
+      index=-1,
+      extent={{6,3},{6,3}},
+      horizontalAlignment=TextAlignment.Left));
 annotation(defaultComponentName="changeMe_CS", Icon(graphics={
         Text(
           extent={{-94,82},{94,74}},
@@ -121,4 +108,4 @@ annotation(defaultComponentName="changeMe_CS", Icon(graphics={
           fillColor={255,255,237},
           fillPattern=FillPattern.Solid,
           textString="Change Me")}));
-end CS_Basic;
+end CS_Bypass_200;

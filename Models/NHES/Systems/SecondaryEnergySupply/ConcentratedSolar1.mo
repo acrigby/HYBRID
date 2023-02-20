@@ -229,18 +229,18 @@ package ConcentratedSolar1
     annotation(Dialog(tab="General"));
 
    ThermoCycle.Components.Units.Solar.SolarField_SchottSopo         solarCollectorIncSchott1(
-      Nt=12,
-      Mdotnom=30,
+      Nt=100,
+      Mdotnom=50,
       redeclare model FluidHeatTransferModel =
           ThermoCycle.Components.HeatFlow.HeatTransfer.Ideal,
       redeclare
         ThermoCycle.Components.HeatFlow.Walls.SolarAbsorber.Geometry.Schott_SopoNova.Schott_2008_PTR70_Vacuum
         CollectorGeometry(L=16),
       redeclare package Medium1 = Modelica.Media.Water.StandardWater,
-      Ns=60,
+      Ns=8,
       Tstart_inlet=298.15,
       Tstart_outlet=373.15,
-      pstart=1000000)
+      pstart=1500000)
       annotation (Placement(transformation(extent={{4,-32},{34,16}})));
     Modelica.Blocks.Sources.Constant const5(k=0)
       annotation (Placement(transformation(extent={{-58,32},{-38,52}})));

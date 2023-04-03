@@ -1359,7 +1359,7 @@ package FWHPT
         points={{-183,76},{-168,76},{-168,52},{-142.733,52},{-142.733,53}},
         color={0,0,127},
         smooth=Smooth.None));
-    connect(const4.y, solarCollectorIncSchott1.Theta) annotation (Line(
+    connect(const4.y, solarCollectorIncSchott1.CosEff) annotation (Line(
         points={{-185,46},{-160,46},{-160,39.3182},{-142.5,39.3182}},
         color={0,0,127},
         smooth=Smooth.None));
@@ -2329,6 +2329,9 @@ package FWHPT
    parameter String fileName=Modelica.Utilities.Files.loadResource(
       "modelica://NHES/Resources/Data/RAVEN/DNI_timeSeries.txt")
     "File where matrix is stored";
+    parameter String fileName2=Modelica.Utilities.Files.loadResource(
+      "modelica://NHES/Resources/Data/RAVEN/CosEff_timeSeries.txt")
+    "File where matrix is stored";
    Real demandChange=
    min(1.05,
    max(SC.W_totalSetpoint_BOP/SC.W_nominal_BOP*fracNominal_BOP
@@ -2391,11 +2394,11 @@ package FWHPT
       annotation (Placement(transformation(extent={{54,-18},{94,22}})));
     EnergyStorage.Concrete_Solid_Media.Dual_Pipe_CTES_Controlled_FeedwaterBypass
       dual_Pipe_CTES_Controlled_Feedwater(redeclare
-        NHES.Systems.EnergyStorage.Concrete_Solid_Media.CS_Bypass2 CS(DNI_Input
-          =DNI_Input.y[1]))
+        NHES.Systems.EnergyStorage.Concrete_Solid_Media.CS_Bypass2 CS(DNI_Input=
+           DNI_Input.y[1]))
       annotation (Placement(transformation(extent={{12,-76},{74,-32}})));
     SecondaryEnergySupply.ConcentratedSolar1.ParabolicTrough parabolicTrough(DNI_Input=
-         DNI_Input.y[1])
+         DNI_Input.y[1], CosEff_Input=CosEff_Input.y[1])
       annotation (Placement(transformation(extent={{-60,-74},{0,-32}})));
     Modelica.Blocks.Sources.Constant delayStart(k=0)
       annotation (Placement(transformation(extent={{-34,78},{-14,98}})));
@@ -2448,6 +2451,14 @@ package FWHPT
       startTime=2e5,
       y_min=-1e6,
       y_max=9e6) annotation (Placement(transformation(extent={{18,48},{38,68}})));
+    Modelica.Blocks.Sources.CombiTimeTable CosEff_Input(
+      tableOnFile=true,
+      offset={0.01},
+      startTime=0,
+      tableName="CosEff",
+      timeScale=timeScale,
+      fileName=fileName2)
+      annotation (Placement(transformation(extent={{-62,42},{-42,62}})));
   equation
       dual_Pipe_CTES_Controlled_Feedwater.CS.FeedwaterTemperature = BOP.sensor_T2.T;
     connect(SY.port_Grid, sensorW.port_a)

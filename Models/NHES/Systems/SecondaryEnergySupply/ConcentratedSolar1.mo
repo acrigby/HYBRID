@@ -227,9 +227,11 @@ package ConcentratedSolar1
       redeclare Data.Data_Dummy data);
     input Real DNI_Input
     annotation(Dialog(tab="General"));
+    input Real CosEff_Input
+    annotation(Dialog(tab="General"));
 
    ThermoCycle.Components.Units.Solar.SolarField_SchottSopo         solarCollectorIncSchott1(
-      Nt=100,
+      Nt=120,
       Mdotnom=50,
       redeclare model FluidHeatTransferModel =
           ThermoCycle.Components.HeatFlow.HeatTransfer.Ideal,
@@ -237,15 +239,13 @@ package ConcentratedSolar1
         ThermoCycle.Components.HeatFlow.Walls.SolarAbsorber.Geometry.Schott_SopoNova.Schott_2008_PTR70_Vacuum
         CollectorGeometry(L=16),
       redeclare package Medium1 = Modelica.Media.Water.StandardWater,
-      Ns=8,
+      Ns=11,
       Tstart_inlet=298.15,
       Tstart_outlet=373.15,
       pstart=1500000)
       annotation (Placement(transformation(extent={{4,-32},{34,16}})));
     Modelica.Blocks.Sources.Constant const5(k=0)
       annotation (Placement(transformation(extent={{-58,32},{-38,52}})));
-    Modelica.Blocks.Sources.Constant const4(k=0)
-      annotation (Placement(transformation(extent={{-60,2},{-40,22}})));
     Modelica.Blocks.Sources.Constant const2(k=25 + 273.15)
       annotation (Placement(transformation(extent={{-74,-34},{-54,-14}})));
     TRANSFORM.Fluid.Interfaces.FluidPort_State Outlet(redeclare package Medium =
@@ -259,12 +259,13 @@ package ConcentratedSolar1
     Modelica.Blocks.Sources.RealExpression
                                      realExpression(y=DNI_Input)
       annotation (Placement(transformation(extent={{-86,-98},{-24,-68}})));
+    Modelica.Blocks.Sources.RealExpression
+                                     realExpression1(y=CosEff_Input)
+      annotation (Placement(transformation(extent={{-134,-4},{-72,26}})));
   equation
 
     connect(const5.y, solarCollectorIncSchott1.v_wind) annotation (Line(points={{-37,
             42},{-2,42},{-2,11.2},{6.33333,11.2}}, color={0,0,127}));
-    connect(const4.y, solarCollectorIncSchott1.Theta) annotation (Line(points={{-39,
-            12},{-4,12},{-4,1.81818},{6.5,1.81818}}, color={0,0,127}));
     connect(const2.y, solarCollectorIncSchott1.Tamb) annotation (Line(points={{-53,-24},
             {-22,-24},{-22,-8.65455},{6.16667,-8.65455}},    color={0,0,127}));
     connect(solarCollectorIncSchott1.OutFlow, Outlet)
@@ -274,6 +275,8 @@ package ConcentratedSolar1
                                  color={0,0,255}));
     connect(realExpression.y, solarCollectorIncSchott1.DNI) annotation (Line(
           points={{-20.9,-83},{-20.9,-21.3091},{6.5,-21.3091}}, color={0,0,127}));
+    connect(realExpression1.y, solarCollectorIncSchott1.CosEff) annotation (Line(
+          points={{-68.9,11},{-68.9,1.81818},{6.5,1.81818}}, color={0,0,127}));
     annotation (experiment(
         StopTime=864000,
         __Dymola_NumberOfIntervals=1957,

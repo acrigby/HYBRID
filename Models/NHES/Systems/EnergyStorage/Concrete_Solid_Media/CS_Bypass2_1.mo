@@ -21,7 +21,7 @@ model CS_Bypass2_1
     k=1e-1,
     Ti=5,
     yMax=12000,
-    yMin=0)
+    yMin=-800)
            annotation (Placement(transformation(extent={{-174,22},{-154,42}})));
   Modelica.Blocks.Sources.Ramp ramp(
     height=100,

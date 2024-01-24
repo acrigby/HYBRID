@@ -5,6 +5,7 @@ model
 
 
 
+
   extends NHES.Systems.BalanceOfPlant.Turbine.BaseClasses.Partial_ControlSystem;
 
   extends NHES.Icons.DummyIcon;
@@ -60,7 +61,7 @@ model
     annotation (Placement(transformation(extent={{-32,-58},{-24,-50}})));
   TRANSFORM.Controls.LimPID FWCP_Speed1(
     controllerType=Modelica.Blocks.Types.SimpleController.PI,
-    k=1e-2,
+    k=1e-1,
     Ti=15,
     Td=1,
     yMax=1000,

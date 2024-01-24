@@ -1,11 +1,6 @@
 within NHES.Systems.BalanceOfPlant.Turbine.ControlSystems;
 model
-  CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl_Combined
-
-
-
-
-
+  CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl_Combined_mflow_deaerator
 
 
 
@@ -14,13 +9,12 @@ model
 
   extends NHES.Icons.DummyIcon;
 
-  input Real electric_demand_int = data.Q_Nom;
+  input Real electric_demand
+    annotation(Dialog(tab="General"));
 
-  Modelica.Blocks.Sources.Constant const5(k=data.T_Feedwater)
-    annotation (Placement(transformation(extent={{-92,-56},{-72,-36}})));
   TRANSFORM.Controls.LimPID TCV_Power(
     controllerType=Modelica.Blocks.Types.SimpleController.PI,
-    k=-5e-8,
+    k=-2e-8,
     Ti=30,
     k_s=1,
     k_m=1,
@@ -30,8 +24,8 @@ model
     xi_start=1500)
     annotation (Placement(transformation(extent={{-48,-2},{-28,-22}})));
   Modelica.Blocks.Sources.RealExpression
-                                   realExpression(y=electric_demand_int)
-    annotation (Placement(transformation(extent={{-94,-6},{-80,6}})));
+                                   realExpression(y=electric_demand)
+    annotation (Placement(transformation(extent={{-170,-54},{-156,-42}})));
   Modelica.Blocks.Sources.Constant const7(k=0.1)
     annotation (Placement(transformation(extent={{-26,-28},{-18,-20}})));
   Modelica.Blocks.Math.Add         add1
@@ -62,16 +56,6 @@ model
     annotation (Placement(transformation(extent={{-38,72},{-18,92}})));
   Modelica.Blocks.Sources.Constant const9(k=data.p_steam_vent)
     annotation (Placement(transformation(extent={{-78,72},{-58,92}})));
-  TRANSFORM.Controls.LimPID Turb_Divert_Valve1(
-    controllerType=Modelica.Blocks.Types.SimpleController.PI,
-    k=5e-5,
-    Ti=60,
-    Td=0.1,
-    yMax=-0.048,
-    yMin=-0.099,
-    initType=Modelica.Blocks.Types.Init.NoInit,
-    xi_start=1500)
-    annotation (Placement(transformation(extent={{-60,-56},{-40,-36}})));
   Modelica.Blocks.Sources.Constant const1(k=0.1)
     annotation (Placement(transformation(extent={{-32,-58},{-24,-50}})));
   TRANSFORM.Controls.LimPID FWCP_Speed1(
@@ -92,6 +76,22 @@ model
     annotation (Placement(transformation(extent={{24,126},{44,146}})));
   Modelica.Blocks.Sources.Constant const10(k=67)
     annotation (Placement(transformation(extent={{-110,124},{-90,144}})));
+  PrimaryHeatSystem.HTGR.VarLimVarK_PID PID1(
+    use_k_in=true,
+    use_uplim_in=false,
+    controllerType=Modelica.Blocks.Types.SimpleController.PI,
+    k=5e-5,
+    Ti=500,
+    yMax=-0.028,
+    yMin=-0.099,
+    xi_start=1500)
+           annotation (Placement(transformation(extent={{-80,-60},{-60,-40}})));
+  Modelica.Blocks.Sources.Ramp ramp(
+    height=-5.001e-5,
+    duration=1e4,
+    offset=5e-5,
+    startTime=2e4)
+    annotation (Placement(transformation(extent={{-160,2},{-140,22}})));
 equation
   connect(const7.y,add1. u2) annotation (Line(points={{-17.6,-24},{-10,-24}},
                                       color={0,0,127}));
@@ -148,19 +148,6 @@ equation
       horizontalAlignment=TextAlignment.Left));
   connect(const.y, TCV_Power.u_s) annotation (Line(points={{-63.3,-15},{-56,-15},
           {-56,-12},{-50,-12}}, color={0,0,127}));
-  connect(sensorBus.Feedwater_Temp, Turb_Divert_Valve1.u_m) annotation (Line(
-      points={{-30,-100},{-30,-66},{-50,-66},{-50,-58}},
-      color={239,82,82},
-      pattern=LinePattern.Dash,
-      thickness=0.5), Text(
-      string="%first",
-      index=-1,
-      extent={{-3,-6},{-3,-6}},
-      horizontalAlignment=TextAlignment.Right));
-  connect(const5.y, Turb_Divert_Valve1.u_s)
-    annotation (Line(points={{-71,-46},{-62,-46}},           color={0,0,127}));
-  connect(Turb_Divert_Valve1.y, timer.u) annotation (Line(points={{-39,-46},{
-          -38,-46},{-38,-40},{-32.8,-40}}, color={0,0,127}));
   connect(const1.y, add2.u2) annotation (Line(points={{-23.6,-54},{-23.6,-52},{
           -10,-52}}, color={0,0,127}));
   connect(FWCP_Speed1.y, add3.u2)
@@ -196,5 +183,21 @@ equation
       index=-1,
       extent={{-3,6},{-3,6}},
       horizontalAlignment=TextAlignment.Right));
+  connect(PID1.y, timer.u) annotation (Line(points={{-59,-50},{-38,-50},{-38,-40},
+          {-32.8,-40}}, color={0,0,127}));
+  connect(realExpression.y, PID1.u_s) annotation (Line(points={{-155.3,-48},{-120,
+          -48},{-120,-50},{-82,-50}}, color={0,0,127}));
+  connect(sensorBus.Power, PID1.u_m) annotation (Line(
+      points={{-30,-100},{-30,-68},{-70,-68},{-70,-62}},
+      color={239,82,82},
+      pattern=LinePattern.Dash,
+      thickness=0.5), Text(
+      string="%first",
+      index=-1,
+      extent={{6,3},{6,3}},
+      horizontalAlignment=TextAlignment.Left));
+  connect(ramp.y, PID1.prop_k) annotation (Line(points={{-139,12},{-102,12},{
+          -102,-38},{-84,-38},{-84,-32},{-62.6,-32},{-62.6,-38.6}}, color={0,0,
+          127}));
 end
-  CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl_Combined;
+  CS_SteamTurbine_L2_PressurePowerFeedtemp_AdditionalFeedheater_PressControl_Combined_mflow_deaerator;

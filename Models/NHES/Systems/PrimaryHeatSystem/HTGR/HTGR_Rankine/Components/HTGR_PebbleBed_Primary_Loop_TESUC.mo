@@ -43,7 +43,7 @@ model HTGR_PebbleBed_Primary_Loop_TESUC
     annotation (Placement(transformation(extent={{90,84},{102,98}})));
 
   Modelica.Blocks.Sources.RealExpression Thermal_Power(y=core.Q_total.y)
-    annotation (Placement(transformation(extent={{-92,88},{-80,102}})));
+    annotation (Placement(transformation(extent={{-120,86},{-108,100}})));
   TRANSFORM.Fluid.Interfaces.FluidPort_Flow port_a(redeclare package Medium =
         Modelica.Media.Water.StandardWater)
                         annotation (Placement(
@@ -99,41 +99,24 @@ model HTGR_PebbleBed_Primary_Loop_TESUC
         rotation=270,
         origin={-78,38})));
 
-  TRANSFORM.Fluid.Sensors.MassFlowRate sensor_m_flow(redeclare package Medium =
-        Coolant_Medium) annotation (Placement(transformation(
+  TRANSFORM.Fluid.Sensors.MassFlowRate sensor_m_flow(redeclare package Medium
+      = Coolant_Medium) annotation (Placement(transformation(
         extent={{-10,-10},{10,10}},
         rotation=180,
         origin={-78,-2})));
   Brayton_Systems.Compressor_Controlled compressor_Controlled(
     redeclare package Medium = Coolant_Medium,
     explicitIsentropicEnthalpy=false,
-    pstart_in=3910000,
-    pstart_out=3920000,
+    pstart_in=6000000,
+    pstart_out=6010000,
     Tstart_in=398.15,
     Tstart_out=423.15,
     use_w0_port=true,
     PR0=1.05,
     w0nom=300)
     annotation (Placement(transformation(extent={{-44,-24},{-64,-4}})));
-  TRANSFORM.Fluid.Valves.ValveLinear Primary_PRV(
-    redeclare package Medium = Modelica.Media.IdealGases.SingleGases.He,
-    dp_nominal=100000,
-    m_flow_nominal=1) annotation (Placement(transformation(
-        extent={{-8,-8},{8,8}},
-        rotation=180,
-        origin={-42,-56})));
-  Modelica.Blocks.Sources.RealExpression Thermal_Power1(y=1.0)
-    annotation (Placement(transformation(extent={{-6,-7},{6,7}},
-        rotation=90,
-        origin={-42,-79})));
-  TRANSFORM.Fluid.BoundaryConditions.Boundary_pT boundary1(
-    redeclare package Medium = Modelica.Media.IdealGases.SingleGases.He,
-    p=4000000,
-    T=573.15,
-    nPorts=1)
-    annotation (Placement(transformation(extent={{-94,-68},{-74,-48}})));
-  TRANSFORM.Fluid.Sensors.TemperatureTwoPort sensor_T(redeclare package Medium =
-        Coolant_Medium) annotation (Placement(transformation(
+  TRANSFORM.Fluid.Sensors.TemperatureTwoPort sensor_T(redeclare package Medium
+      = Coolant_Medium) annotation (Placement(transformation(
         extent={{-5,-7},{5,7}},
         rotation=270,
         origin={-39,63})));
@@ -143,7 +126,8 @@ model HTGR_PebbleBed_Primary_Loop_TESUC
         TRANSFORM.Fluid.ClosureRelations.PressureLoss.Models.DistributedPipe_1D.SinglePhase_Developed_2Region_NumStable,
     redeclare model FlowModel_tube =
         TRANSFORM.Fluid.ClosureRelations.PressureLoss.Models.DistributedPipe_1D.TwoPhase_Developed_2Region_NumStable,
-    p_b_start_shell=3910000,
+
+    p_b_start_shell=6010000,
     p_a_start_tube=14100000,
     p_b_start_tube=14000000,
     use_Ts_start_tube=true,
@@ -156,10 +140,11 @@ model HTGR_PebbleBed_Primary_Loop_TESUC
     redeclare package Material_tubeWall = TRANSFORM.Media.Solids.SS304,
     redeclare model HeatTransfer_tube =
         TRANSFORM.Fluid.ClosureRelations.HeatTransfer.Models.DistributedPipe_1D_MultiTransferSurface.Alphas_TwoPhase_5Region,
-    p_a_start_shell=3915000,
+
+    p_a_start_shell=6000000,
     T_a_start_shell=1023.15,
     T_b_start_shell=523.15,
-    m_flow_a_start_shell=50,
+    m_flow_a_start_shell=150,
     m_flow_a_start_tube=100,
     redeclare package Medium_tube = Modelica.Media.Water.WaterIF97_ph,
     redeclare model Geometry =
@@ -183,6 +168,8 @@ model HTGR_PebbleBed_Primary_Loop_TESUC
         rotation=90,
         origin={29,18})));
 
+  TRANSFORM.Fluid.Sensors.Pressure sensor_p
+    annotation (Placement(transformation(extent={{-24,34},{-4,54}})));
 initial equation
 
 equation
@@ -198,11 +185,6 @@ equation
       color={239,82,82},
       pattern=LinePattern.Dash,
       thickness=0.5));
-  connect(sensorBus.Power, Thermal_Power.y) annotation (Line(
-      points={{-30,100},{-74,100},{-74,95},{-79.4,95}},
-      color={239,82,82},
-      pattern=LinePattern.Dash,
-      thickness=0.5));
   connect(sensor_m_flow.port_b,core. port_a) annotation (Line(points={{-88,-2},
           {-86,-2},{-86,18},{-78,18},{-78,28}},    color={0,127,255}));
   connect(compressor_Controlled.outlet,sensor_m_flow. port_a)
@@ -212,15 +194,6 @@ equation
   connect(compressor_Controlled.inlet,STHX. port_b_shell) annotation (Line(
         points={{-48,-6},{22,-6},{22,2},{23.94,2},{23.94,6}},
                                                       color={0,127,255}));
-  connect(Primary_PRV.port_a,compressor_Controlled. inlet) annotation (Line(
-        points={{-34,-56},{-28,-56},{-28,-38},{-38,-38},{-38,-26},{-40,-26},{
-          -40,-6},{-48,-6}},
-                           color={0,127,255}));
-  connect(Thermal_Power1.y,Primary_PRV. opening) annotation (Line(points={{-42,
-          -72.4},{-42,-62.4}},        color={0,0,127}));
-  connect(Primary_PRV.port_b,boundary1. ports[1])
-    annotation (Line(points={{-50,-56},{-50,-68},{-68,-68},{-68,-58},{-74,-58}},
-                                                   color={0,127,255}));
   connect(sensor_T.port_b,STHX. port_a_shell) annotation (Line(points={{-39,58},
           {-39,34},{23.94,34},{23.94,30}},  color={0,127,255}));
   connect(core.port_b,sensor_T. port_a) annotation (Line(points={{-78,48},{-78,
@@ -242,6 +215,23 @@ equation
       color={111,216,99},
       pattern=LinePattern.Dash,
       thickness=0.5));
+  connect(Thermal_Power.y, sensorBus.thermal_power) annotation (Line(points={{
+          -107.4,93},{-56,93},{-56,100},{-30,100}}, color={0,0,127}), Text(
+      string="%second",
+      index=1,
+      extent={{6,3},{6,3}},
+      horizontalAlignment=TextAlignment.Left));
+  connect(sensor_T.port_b, sensor_p.port)
+    annotation (Line(points={{-39,58},{-39,34},{-14,34}}, color={0,127,255}));
+  connect(sensorBus.primarypressure, sensor_p.p) annotation (Line(
+      points={{-30,100},{-30,58},{0,58},{0,44},{-8,44}},
+      color={239,82,82},
+      pattern=LinePattern.Dash,
+      thickness=0.5), Text(
+      string="%first",
+      index=-1,
+      extent={{-6,3},{-6,3}},
+      horizontalAlignment=TextAlignment.Right));
   annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={
           Bitmap(extent={{-80,-92},{78,84}}, fileName="modelica://NHES/Icons/PrimaryHeatSystemPackage/HTGRPB.jpg")}),
                                                                  Diagram(

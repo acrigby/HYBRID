@@ -33,7 +33,7 @@ model CS_DivertPowerControl_HTGR_3
     xi_start=1500)
     annotation (Placement(transformation(extent={{-58,-28},{-38,-48}})));
   Modelica.Blocks.Sources.RealExpression
-                                   realExpression(y=electric_demand)
+                                   realExpression(y=electric_demand - 1.45e6)
     annotation (Placement(transformation(extent={{96,-32},{110,-20}})));
   Modelica.Blocks.Sources.Constant const7(k=1)
     annotation (Placement(transformation(extent={{-34,-54},{-26,-46}})));
@@ -104,12 +104,8 @@ model CS_DivertPowerControl_HTGR_3
     annotation (Placement(transformation(extent={{152,-122},{144,-114}})));
   Modelica.Blocks.Sources.Constant const1(k=data.p_steam)
     annotation (Placement(transformation(extent={{-92,-48},{-72,-28}})));
-  Modelica.Blocks.Math.Min min1
-    annotation (Placement(transformation(extent={{92,-80},{112,-60}})));
   Modelica.Blocks.Math.Min min2
     annotation (Placement(transformation(extent={{174,-80},{194,-60}})));
-  Modelica.Blocks.Sources.Constant const6(k=data.Q_Nom)
-    annotation (Placement(transformation(extent={{50,-76},{74,-52}})));
   Modelica.Blocks.Sources.Constant const12(k=data.Q_Nom + 0.001e6)
     annotation (Placement(transformation(extent={{116,-58},{140,-34}})));
   Modelica.Blocks.Sources.RealExpression
@@ -227,16 +223,12 @@ equation
       color={239,82,82},
       pattern=LinePattern.Dash,
       thickness=0.5));
-  connect(min1.u1, const6.y)
-    annotation (Line(points={{90,-64},{75.2,-64}}, color={0,0,127}));
   connect(realExpression.y, min2.u1) annotation (Line(points={{110.7,-26},{160,
           -26},{160,-64},{172,-64}}, color={0,0,127}));
   connect(min2.y, Charge_OnOff_Throttle.u_s) annotation (Line(points={{195,-70},
           {238,-70},{238,-88},{154,-88}}, color={0,0,127}));
   connect(min2.u2, const12.y) annotation (Line(points={{172,-76},{168,-76},{168,
           -46},{141.2,-46}}, color={0,0,127}));
-  connect(min1.u2, const6.y) annotation (Line(points={{90,-76},{80,-76},{80,-64},
-          {75.2,-64}}, color={0,0,127}));
   connect(sensorBus.Power, Charge_OnOff_Throttle.u_m) annotation (Line(
       points={{-30,-100},{-28,-100},{-28,-70},{142,-70},{142,-76}},
       color={239,82,82},
